@@ -66,9 +66,10 @@ request menjadi 20 per 10 detik per alamat IP, serta memeriksa API key pada
 jalur pesanan. Implementasi mengikuti Opsi A Lab 08 dengan Node.js, Express,
 \code{http-proxy-middleware}, dan \code{express-rate-limit}.
 
-Hasil yang ditunjukkan meliputi akses kedua service melalui port 8080, penolakan
+Pembuktian awal meliputi akses kedua service melalui port 8080, penolakan
 akses tanpa key, dan perubahan respons menjadi \code{429} ketika kuota
-terlampaui. Tugas dikerjakan secara individu; kedua service dipakai sebagai
+terlampaui; deployment publik dilaporkan pada Bagian~\ref{sec:render}.
+Tugas dikerjakan secara individu; kedua service dipakai sebagai
 konteks demonstrasi gateway. Materi Web Service menjadi acuan keamanan API key,
 sedangkan materi Software Testing menjadi acuan pengujian batas dan skenario
 negatif.
@@ -110,10 +111,11 @@ gateway dan bagian kedua merupakan resource pada Order Service. Endpoint
 \code{GET /health} tersedia pada ketiga proses.
 
 \subsection{Rate limiting, API key, dan penerusan request}
-Middleware rate limit dipasang sebelum routing. Semua endpoint gateway,
-termasuk health check, respons \code{401}, dan route tidak dikenal, berbagi
-kuota untuk IP yang sama. Request ke-21 dalam window yang sama mendapat
-\code{429 Too Many Requests}. Penghitung memakai memori satu proses.
+Middleware rate limit dipasang sebelum routing API. Endpoint API, termasuk
+\code{/health}, respons \code{401}, dan route tidak dikenal, berbagi kuota
+untuk IP yang sama. Request ke-21 dalam window yang sama mendapat
+\code{429}. Penghitung memakai memori satu proses. Endpoint readiness
+\code{/readyz} untuk deployment diletakkan di luar limiter.
 
 Katalog bersifat publik, sedangkan jalur pesanan memerlukan header
 \code{X-API-Key}. Key yang tidak ada atau tidak cocok ditolak dengan
@@ -243,9 +245,10 @@ gateway dengan \code{401 Unauthorized}.}
 \end{figure}
 
 \subsection{Hasil suite otomatis}
-Eksekusi \code{npm test} menghasilkan \textbf{35 test lulus dari 35 test},
-tanpa kegagalan. Ringkasan berikut berasal dari log eksekusi
-\path{docs/evidence/tests.txt}.
+Eksekusi awal \code{npm test} menghasilkan \textbf{35 test lulus dari 35 test},
+tanpa kegagalan, sesuai log \path{docs/evidence/tests.txt} berikut.
+Setelah perubahan deployment, suite menjadi 40 test; hasil terbarunya
+tercantum pada Bagian~\ref{sec:render}.
 \begin{lstlisting}
 1..35
 # tests 35
@@ -304,8 +307,9 @@ beberapa instance memerlukan shared store.
 \item Data demo tersimpan dalam memori. Stok belum direservasi atau dikurangi;
 konsistensi pesanan bersamaan belum dijamin.
 \item Rotasi, pencabutan, scope API key, serta autentikasi pengguna belum diterapkan.
-\item Demonstrasi berjalan lokal. Payment, komunikasi asinkron, OAuth2, mTLS,
-dan deployment publik berada di luar ruang lingkup tugas ini.
+\item Bukti awal berjalan lokal; deployment publik dibahas pada
+Bagian~\ref{sec:render}. Payment, komunikasi asinkron, OAuth2, dan mTLS
+berada di luar ruang lingkup tugas ini.
 \end{itemize}
 
 Pada audit 21 Oktober 2026, \code{braces@3.0.3} pada rantai
@@ -348,4 +352,67 @@ Unit Testing (JUnit)}. \path{materi/3softwaretesting/sesi8.txt}.
 \item \href{https://github.com/academicbambang/prakwebservice-lab08-api-gateway}{Repository kode, collection Postman, dan bukti pengujian (GitHub).}
 \end{enumerate}
 }
+
+\clearpage
+\section{Deployment publik pada Render}
+\label{sec:render}
+Gateway telah tersedia melalui HTTPS pada alamat berikut:
+\begin{center}
+\url{https://prakwebservice-lab08-api-gateway.onrender.com}
+\end{center}
+Deployment pertama dari commit \code{196da4b} berhasil pada
+21 Oktober 2026 pukul 13.59 WIB (GMT+7). Satu \emph{Render Free Web Service}
+menjalankan \code{npm start} dengan tiga proses: gateway mendengarkan
+\code{0.0.0.0:PORT} (default Render \code{10000}), sedangkan backend hanya
+mendengarkan loopback pada port 3000 dan 3001. Ketiganya berada dalam satu
+instance layanan, bukan tiga instance terpisah.
+
+\begin{figure}[H]
+\begin{minipage}[t]{.59\linewidth}
+\vspace{0pt}
+\small
+\textbf{Hasil verifikasi endpoint publik}\par
+\begin{tabularx}{\linewidth}{@{}Y L{2.15cm}@{}}
+\toprule
+Pemeriksaan & Hasil aktual\\
+\midrule
+\code{GET /readyz}, awal dan setelah limit & \code{200} / \code{200}\\
+Katalog GET / GraphQL POST & \code{200} / \code{200}\\
+Pesanan tanpa / dengan key & \code{401} / \code{200}\\
+Buat pesanan / detail \code{Location} & \code{201} / \code{200}\\
+Kuantitas nol / route tidak dikenal & \code{400} / \code{404}\\
+30 request pada window bersih & 20\(\times\)\code{200}, 10\(\times\)\code{429}\\
+Suite setelah perubahan deployment & 40/40 lulus\\
+\bottomrule
+\end{tabularx}
+\end{minipage}\hfill
+\begin{minipage}[t]{.36\linewidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{render-dashboard.png}
+\end{minipage}
+\caption{Status layanan \emph{Live} pada dashboard Render dan ringkasan
+verifikasi publik. ID layanan: \texttt{srv-dbc65fbncjis738gmhlg}.}
+\label{fig:render}
+\end{figure}
+
+Pembuatan pesanan publik memakai \code{prod-001} sebanyak dua unit dan
+menghasilkan total Rp170.000. Detailnya berhasil dibaca melalui header
+\code{Location}. Pengujian kuota menunggu window bersih; readiness tetap
+\code{200} sesudah API menghasilkan \code{429}, karena \code{/readyz}
+tidak memakai kuota API.
+
+Key deployment acak 256-bit disimpan lokal pada
+\path{gateway/.env.render}, yang diabaikan oleh Git. Klien memakai nilai
+\code{API_KEY} asli sebagai header \code{X-API-Key}; Render hanya menyimpan
+digest \code{API_KEY_SHA256}. Nilai key tidak dicantumkan dalam laporan
+atau bukti publik.
+
+Layanan Free dapat tidur setelah 15 menit tanpa trafik; akses pertama
+dapat memerlukan sekitar satu menit untuk aktif kembali. Data pesanan
+berada dalam memori dan hilang ketika proses dimulai ulang. Hasil verifikasi
+publik ada pada \path{docs/evidence/render-verification.json} dan
+\path{docs/evidence/render-verification.txt}; hasil suite terbaru
+\textbf{40 test lulus, 0 gagal} ada pada
+\path{docs/evidence/tests-deployment.txt}.
 \end{document}

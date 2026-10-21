@@ -2,7 +2,7 @@
 
 Dokumen utama: [main.tex](main.tex). Folder `images/` memuat seluruh diagram dan tangkapan layar yang dibutuhkan, sehingga proyek ini dapat dipindahkan sebagai satu folder atau diunggah ke Overleaf.
 
-PDF final: [laporan-praktikum-sesi-08.pdf](../../output/pdf/laporan-praktikum-sesi-08.pdf), 7 halaman A4. Dokumen dibuat untuk tugas individu Bambang Herlambang, NIM 5803024019.
+PDF final: [laporan-praktikum-sesi-08.pdf](../../output/pdf/laporan-praktikum-sesi-08.pdf), 8 halaman A4. Dokumen dibuat untuk tugas individu Bambang Herlambang, NIM 5803024019. Bagian 8 memuat deployment publik Render dan bukti verifikasinya.
 
 ## Membuka dan mengompilasi
 
@@ -27,4 +27,4 @@ Hasil perintah tersebut adalah `main.pdf`. Untuk memperbarui berkas pengumpulan,
 
 Gambar disalin dari `docs/arsitektur.png` dan `docs/evidence`. Sumber gambar asli tidak diubah. Perintah `trim` dan `clip` dalam LaTeX membatasi area tampilan screenshot Postman pada halaman agar bagian request dan respons lebih terbaca.
 
-Bukti rate limit berupa tangkapan halaman transkrip keluaran skrip asli, bukan tangkapan terminal langsung. Ringkasan 35/35 pengujian pada PDF berasal dari `docs/evidence/tests.txt`; laporan ini tidak mengubah atau menjalankan ulang kode aplikasi.
+Bukti rate limit lokal berupa tangkapan halaman transkrip keluaran skrip asli, bukan tangkapan terminal langsung. Hasil awal 35/35 berasal dari `docs/evidence/tests.txt`; hasil terbaru 40/40 dan verifikasi publik berasal dari `docs/evidence/tests-deployment.txt` serta `docs/evidence/render-verification.json`. Gambar `render-dashboard.png` merekam status Live di Render.

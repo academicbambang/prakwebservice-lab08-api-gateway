@@ -1,0 +1,108 @@
+{
+  "origin": "https://prakwebservice-lab08-api-gateway.onrender.com",
+  "startedAt": "2026-10-21T07:01:13.405Z",
+  "completedAt": "2026-10-21T07:01:27.849Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "Readiness",
+      "method": "GET",
+      "path": "/readyz",
+      "status": 200
+    },
+    {
+      "name": "Katalog",
+      "method": "GET",
+      "path": "/catalog/products",
+      "status": 200
+    },
+    {
+      "name": "GraphQL",
+      "method": "POST",
+      "path": "/catalog/graphql",
+      "status": 200
+    },
+    {
+      "name": "Pesanan tanpa key",
+      "method": "GET",
+      "path": "/orders/orders",
+      "status": 401
+    },
+    {
+      "name": "Pesanan dengan key",
+      "method": "GET",
+      "path": "/orders/orders",
+      "status": 200
+    },
+    {
+      "name": "Buat pesanan demo",
+      "method": "POST",
+      "path": "/orders/orders",
+      "status": 201
+    },
+    {
+      "name": "Detail melalui Location",
+      "method": "GET",
+      "path": "/orders/orders/ord-4eee6540-3216-42c7-adbc-52ecca650973",
+      "status": 200
+    },
+    {
+      "name": "Quantity nol ditolak",
+      "method": "POST",
+      "path": "/orders/orders",
+      "status": 400
+    },
+    {
+      "name": "Route tidak dikenal",
+      "method": "GET",
+      "path": "/unknown",
+      "status": 404
+    },
+    {
+      "name": "Readiness setelah API 429",
+      "method": "GET",
+      "path": "/readyz",
+      "status": 200
+    }
+  ],
+  "createdOrder": {
+    "id": "ord-4eee6540-3216-42c7-adbc-52ecca650973",
+    "total": 170000
+  },
+  "rateLimit": {
+    "limit": 20,
+    "windowMs": 10000,
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      429,
+      429,
+      429,
+      429,
+      429,
+      429,
+      429,
+      429,
+      429,
+      429
+    ]
+  }
+}

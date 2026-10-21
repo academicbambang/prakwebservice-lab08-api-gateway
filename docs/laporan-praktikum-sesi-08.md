@@ -45,9 +45,9 @@ URL `/orders/orders` disengaja: `/orders` pertama adalah namespace gateway untuk
 
 Repository memakai npm workspaces untuk `gateway`, `catalog-service`, dan `order-service`. Setup membuat API key acak lokal dalam `gateway/.env`, sedangkan skrip start menjalankan ketiga proses secara lintas sistem operasi. Gateway juga dapat dijalankan langsung melalui `node gateway/gateway.js` dari root atau `node gateway.js` dari folder `gateway` setelah kedua service aktif. Pada stack, `PORT` mengatur port gateway, sedangkan `CATALOG_PORT` dan `ORDER_PORT` mengatur port masing-masing backend agar variabel `PORT` global tidak menyebabkan konflik.
 
-Gateway membaca `PORT`, `HOST`, `CATALOG_SERVICE_URL`, `ORDER_SERVICE_URL`, `API_KEY`, dan `TRUST_PROXY` dari konfigurasi. Default lokal adalah host `127.0.0.1`, port `8080`, dan `TRUST_PROXY=0`. Untuk deployment opsional di platform seperti Render, `HOST=0.0.0.0` membuka listen pada antarmuka jaringan dan `TRUST_PROXY=1` digunakan bila terdapat satu reverse proxy terpercaya. Praktikum ini tidak mengklaim deployment publik telah dilakukan.
+Gateway membaca `PORT`, `HOST`, `CATALOG_SERVICE_URL`, `ORDER_SERVICE_URL`, `API_KEY`, dan `TRUST_PROXY` dari konfigurasi. Default lokal adalah host `127.0.0.1`, port `8080`, dan `TRUST_PROXY=0`. Pada Render, gateway memakai `HOST=0.0.0.0`, port dari platform, dan `TRUST_PROXY=1`; kedua backend tetap loopback. Hasil deployment publik dicatat pada bagian 9, terpisah dari bukti pengujian lokal awal.
 
-Rate limit dipasang sebelum routing sehingga setiap IP mendapat paling banyak 20 request selama 10 detik untuk seluruh endpoint gateway. Request berikutnya memperoleh `429 Too Many Requests`. Health check dan request yang ditolak juga menghabiskan kuota; pengujian batas harus dimulai dengan window yang bersih. Penyimpanan penghitung lokal berada dalam memori satu proses.
+Rate limit dipasang sebelum routing API sehingga setiap IP mendapat paling banyak 20 request selama 10 detik. Request berikutnya memperoleh `429 Too Many Requests`. Endpoint `/health` dan request yang ditolak juga menghabiskan kuota; pengujian batas harus dimulai dengan window yang bersih. Endpoint readiness `/readyz` dikecualikan agar pemeriksaan platform tidak memakai kuota API. Penyimpanan penghitung lokal berada dalam memori satu proses.
 
 API key dikirim melalui header `X-API-Key`. Key server diubah menjadi hash dalam memori untuk pemeriksaan, dan konfigurasi `API_KEY_SHA256` dapat dipakai sebagai alternatif penyimpanan digest. Key tidak ditanam dalam kode atau file environment Postman yang di-commit. Header tidak ada atau tidak cocok menghasilkan `401 Unauthorized` pada jalur pesanan. Mekanisme ini merupakan pemeriksaan key demo; rotasi, pencabutan, dan izin per pengguna masih merupakan pengembangan berikutnya.
 
@@ -158,3 +158,13 @@ Pengujian pada repository merupakan verifikasi pengembang untuk tugas individu.
 5. [Dokumentasi resmi express-rate-limit](https://express-rate-limit.mintlify.app/reference/configuration), konfigurasi window, batas request, dan respons `429`.
 
 Ketiga materi lokal berada di folder `materi` pada workspace induk repository. Materi memberi dasar requirement praktikum dan pembatasan scope; dokumentasi resmi digunakan untuk implementasi middleware.
+
+## 9. Deployment publik Render
+
+Gateway telah live di **https://prakwebservice-lab08-api-gateway.onrender.com**. Satu instance Free menjalankan tiga proses: gateway publik dan backend Catalog/Order pada loopback. Deployment pertama memakai commit `196da4b` pada 21 Oktober 2026 pukul 13:59 (UTC+7).
+
+Verifikasi publik menghasilkan katalog dan GraphQL `200`, pesanan tanpa key `401`, pesanan dengan key `200`, pembuatan pesanan demo `201` dengan total Rp170.000, serta detail melalui `Location` `200`. Uji 30 request menghasilkan tepat 20 respons `200` lalu 10 respons `429`. Endpoint `/readyz` tetap `200` setelah kuota API habis.
+
+Suite terbaru setelah penambahan pemeriksaan deployment lulus **40/40**, sedangkan log awal 35/35 dipertahankan sebagai bukti historis. Key deployment berada dalam `gateway/.env.render` yang diabaikan Git; server Render hanya menyimpan digest-nya. Instance Free dapat tidur saat tidak digunakan dan data demo hilang ketika proses restart.
+
+[Panduan dan bukti deployment](deployment-render.md), [status Live](evidence/render-dashboard.png), [log publik](evidence/render-verification.txt), [hasil JSON](evidence/render-verification.json), dan [log 40/40](evidence/tests-deployment.txt).

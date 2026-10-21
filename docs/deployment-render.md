@@ -1,6 +1,28 @@
 # Deployment demo ke Render
 
-Konfigurasi siap deploy tersedia pada [`render.yaml`](../render.yaml). Status deployment baru dinyatakan berhasil setelah Render memberikan URL dan endpoint publik diverifikasi. Dokumen ini tidak mengklaim aplikasi sudah live.
+**Status: live dan terverifikasi pada 21 Oktober 2026.**
+
+- URL gateway: **https://prakwebservice-lab08-api-gateway.onrender.com**
+- [Katalog publik](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products) dan [kesiapan layanan](https://prakwebservice-lab08-api-gateway.onrender.com/readyz).
+- [Dashboard Render](https://dashboard.render.com/web/srv-dbc65fbncjis738gmhlg).
+- Deployment pertama: commit `196da4b`, 21 Oktober 2026 pukul 13:59 (UTC+7).
+- [Bukti status live](evidence/render-dashboard.png), [log verifikasi publik](evidence/render-verification.txt), dan [hasil JSON](evidence/render-verification.json).
+
+Konfigurasi yang dapat direproduksi tersedia pada [`render.yaml`](../render.yaml). Pengujian lokal terbaru lulus **40/40**, sesuai [log deployment](evidence/tests-deployment.txt).
+
+| Pemeriksaan publik | Hasil |
+| --- | --- |
+| `/readyz` dan `/catalog/products` | `200` |
+| GraphQL katalog | `200`, field produk dan harga benar |
+| Pesanan tanpa API key | `401` |
+| Pesanan dengan API key | `200` |
+| Pembuatan pesanan demo | `201`, total Rp170.000 |
+| Detail melalui `Location` | `200`, ID dan total sesuai |
+| Kuantitas nol / route tidak dikenal | `400` / `404` |
+| 30 request katalog pada window bersih | 20 kali `200`, kemudian 10 kali `429` |
+| Readiness setelah kuota API habis | Tetap `200` |
+
+![Render menunjukkan Deploy succeeded dan Live](evidence/render-dashboard.png)
 
 ## Susunan deployment
 
@@ -59,7 +81,15 @@ Jangan hardcode `PORT`: Render mengisi port gateway. Supervisor tetap mengikat C
 
 ## Verifikasi setelah deploy
 
-Ganti `https://NAMA-LAYANAN.onrender.com` dengan URL aktual yang diberikan Render:
+Untuk menjalankan ulang pemeriksaan otomatis (menggunakan key lokal deployment tanpa menampilkannya):
+
+```sh
+npm run verify:deployment
+```
+
+Skrip membuat satu pesanan demo dan menunggu window bersih sebelum uji rate limit. Hasil disimpan tanpa key pada `docs/evidence/render-verification.txt` dan `.json`. Hindari request dari IP yang sama selama pengujian 30 request.
+
+Untuk Postman, import [`render.postman_environment.json`](postman/render.postman_environment.json), pilih **Lab 08 Render**, lalu isi `apiKey` dengan `API_KEY` dari `gateway/.env.render`. Daftar pemeriksaan manual:
 
 1. `GET /readyz`: `200`, status gateway `ok`.
 2. `GET /catalog/products`: `200`, data dari Catalog Service.
@@ -75,6 +105,6 @@ Simpan bukti deployment terpisah dari bukti localhost pada `docs/evidence`. Past
 
 Data pesanan dan kuota rate limit berada dalam memori. Keduanya direset saat instance restart, redeploy, atau tidur. Render Free dapat tidur setelah tidak ada trafik dan memerlukan waktu untuk aktif kembali; tunggu hingga `/readyz` normal sebelum menguji 30 request.
 
-Laporan PDF awal merekam pengujian lokal sebelum deployment. URL dan bukti publik akan dicatat setelah deployment berhasil; hasil lokal tidak dipresentasikan sebagai hasil pengujian publik.
+Laporan membedakan pengujian lokal awal dari verifikasi publik sesudah deployment. Bukti localhost tetap dipertahankan; hasil publik tersimpan pada berkas `render-verification` yang terpisah.
 
 Referensi: [Render Node/Express](https://render.com/docs/deploy-node-express-app), [Blueprint](https://render.com/docs/blueprint-spec), [batasan Free](https://render.com/docs/free), dan [health checks](https://render.com/docs/health-checks).

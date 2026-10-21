@@ -2,7 +2,9 @@
 
 **Bambang Herlambang - 5803024019**
 
-Demo individu API Gateway menggunakan Node.js dan Express. Satu alamat gateway meneruskan request ke Catalog Service dan Order Service, membatasi request menjadi 20 per 10 detik per IP, serta memeriksa API key pada akses pesanan. Repository ini merupakan tugas praktikum sesi 8; cakupannya adalah demonstrasi gateway lokal.
+Demo individu API Gateway menggunakan Node.js dan Express. Satu alamat gateway meneruskan request ke Catalog Service dan Order Service, membatasi request menjadi 20 per 10 detik per IP, serta memeriksa API key pada akses pesanan. Repository tugas praktikum sesi 8 ini dapat dijalankan lokal dan sudah di-deploy ke Render.
+
+**Demo publik Render:** [lihat katalog](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products) atau [periksa readiness](https://prakwebservice-lab08-api-gateway.onrender.com/readyz). Deployment berjalan pada instance Free dan telah diverifikasi, termasuk API key, GraphQL, pembuatan pesanan, serta 20 respons `200` diikuti 10 respons `429`.
 
 ## Menjalankan
 
@@ -116,7 +118,7 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 
 ## Berkas pengumpulan
 
-- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 7 halaman A4, mencakup diagram, hasil pengujian, bukti Postman, rate limit, dan refleksi.
+- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 8 halaman A4, mencakup diagram, hasil pengujian, bukti Postman, rate limit, refleksi, dan deployment publik.
 - [Sumber LaTeX](docs/latex/main.tex) dan [petunjuk kompilasi](docs/latex/README.md): proyek lengkap dengan gambar di dalam folder `docs/latex`.
 - [Unduh proyek LaTeX lengkap (ZIP)](output/latex/laporan-praktikum-sesi-08-latex.zip): siap diunggah ke Overleaf.
 - [Laporan praktikum](docs/laporan-praktikum-sesi-08.md): implementasi, diagram, prosedur pengujian, dan refleksi.
@@ -134,7 +136,7 @@ Seluruh bukti di atas berasal dari eksekusi aktual dan tersedia dalam repository
 
 ## Deployment ke Render
 
-Blueprint tersedia pada [`render.yaml`](render.yaml), dengan [panduan deployment dan verifikasi](docs/deployment-render.md). Untuk demo, satu instance Free menjalankan tiga proses; hanya gateway dipublikasikan, sedangkan Catalog dan Order tetap pada loopback. Jalankan `npm run setup:render` untuk membuat key deployment terpisah dalam file yang diabaikan Git. Konfigurasi siap deploy tidak dianggap sebagai bukti aplikasi sudah live; URL publik dicatat setelah deployment terverifikasi.
+Gateway sudah live di **https://prakwebservice-lab08-api-gateway.onrender.com**. [Panduan dan bukti deployment](docs/deployment-render.md) memuat hasil pemeriksaan publik. Satu instance Free menjalankan tiga proses; hanya gateway dipublikasikan, sedangkan Catalog dan Order tetap pada loopback. Key klien deployment berada dalam `gateway/.env.render` yang diabaikan Git; Render hanya menyimpan digest-nya. Gunakan [environment Postman Render](docs/postman/render.postman_environment.json) untuk menguji URL publik, atau jalankan `npm run verify:deployment`. Blueprint tersedia pada [`render.yaml`](render.yaml).
 
 ## Catatan audit dependensi
 
@@ -142,7 +144,7 @@ Audit menemukan advisory [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHS
 
 ## Cakupan dan referensi
 
-Demo ini belum mencakup payment, message queue, OAuth2, mTLS, deployment publik, maupun pengujian independen sistem kelompok lain. Rancangan keamanan proyek UAS dan tugas Java/JUnit Software Testing merupakan tugas terpisah. Materi Web Service dipakai untuk penanganan secret/API key; materi Software Testing dipakai untuk skenario batas dan negatif.
+Demo ini belum mencakup payment, message queue, OAuth2, mTLS, maupun pengujian independen sistem kelompok lain. Rancangan keamanan proyek UAS dan tugas Java/JUnit Software Testing merupakan tugas terpisah. Materi Web Service dipakai untuk penanganan secret/API key; materi Software Testing dipakai untuk skenario batas dan negatif. Deployment Render Free dapat tidur ketika tidak digunakan; data pesanan demo direset ketika proses restart atau instance tidur.
 
 - Materi lokal: `../materi/2prakwebservice/sesi8.txt` (Lab 08 API Gateway), `../materi/1webservice/sesi8.txt` (keamanan dan scope proyek), `../materi/3softwaretesting/sesi8.txt` (pengujian batas, negatif, dan FIRST). Folder sumber berada di workspace induk, di luar repository ini.
 - [Dokumentasi resmi http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware), khususnya routing dan `pathRewrite`.
