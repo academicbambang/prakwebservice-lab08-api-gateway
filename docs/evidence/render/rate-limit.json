@@ -2,9 +2,9 @@
   "url": "https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products",
   "protocol": "HTTP/2",
   "mode": "sequential",
-  "startedAt": "2026-10-21T11:18:06.283Z",
-  "completedAt": "2026-10-21T11:18:07.995Z",
-  "elapsedMs": 1705,
+  "startedAt": "2026-10-21T11:43:50.592Z",
+  "completedAt": "2026-10-21T11:43:52.282Z",
+  "elapsedMs": 1681,
   "limit": 20,
   "windowMs": 10000,
   "statuses": [

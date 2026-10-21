@@ -83,8 +83,8 @@ jalur pesanan. Implementasi mengikuti Opsi A Lab 08 dengan Node.js, Express,
 Pembuktian meliputi akses kedua service melalui satu alamat gateway, penolakan
 akses tanpa key, dan perubahan respons menjadi \code{429} ketika kuota
 terlampaui. Bukti Postman mencakup gateway lokal di port 8080 dan alamat HTTPS Render.
-Rate limit lokal dibuktikan dengan screenshot terminal; verifikasi Render
-dicatat dalam log otomatis. Susunan deployment publik
+Rate limit lokal dan Render dibuktikan dengan screenshot terminal serta
+log pengujian. Susunan deployment publik
 dilaporkan pada Bagian~\ref{sec:render}.
 Tugas dikerjakan secara individu sebagai implementasi sebagian rancangan
 Marketplace UMKM Kelompok D, dengan fokus pada API Gateway, Catalog Service,
@@ -396,7 +396,7 @@ Header memakai variabel \code{apiKey}; key asli tidak ditampilkan.}
 \end{figure}
 
 \clearpage
-\section{Verifikasi API key dan rate limit pada Render}
+\section{Verifikasi API key pada Render}
 \begin{figure}[H]
 \centering
 \postmanshot[490bp 400bp 15bp 210bp]{postman-unauthorized.png}
@@ -405,43 +405,40 @@ ditolak gateway dengan \code{401 Unauthorized}; ketiga assertion Postman lulus.}
 \label{fig:unauthorized}
 \end{figure}
 
-\subsection{Verifikasi otomatis rate limit Render}
+\clearpage
+\section{Bukti rate limiting pada Render}
 Pengujian URL publik dijalankan dengan \code{npm run test:rate-limit:render}.
 Skrip mengaktifkan layanan melalui \code{/readyz}, menunggu pemulihan kuota
 probe katalog, lalu mengirim 30 request berurutan melalui satu sesi HTTP/2.
 Assertion memeriksa status, penghitung sisa kuota, dan durasi kurang dari
 10 detik. Pengaturan kuota gateway tetap 20 request per 10 detik per IP.
 
-\begin{table}[H]
-\centering\small
-\begin{tabularx}{\linewidth}{@{}L{5.3cm}Y@{}}
-\toprule
-Pemeriksaan & Hasil aktual pada log\\
-\midrule
-Lingkungan / protokol & URL HTTPS Render / HTTP/2\\
-Request 01--20 & \code{200 OK}\\
-Request 21--30 & \code{429 Too Many Requests}\\
-Durasi 30 request & \code{1705 ms}\\
-Penghitung sisa kuota & 19 turun ke 0, lalu tetap 0\\
-Assertion & \code{LULUS}\\
-\bottomrule
-\end{tabularx}
-\caption{Ringkasan log rate limit Render; tabel ini merupakan bukti log
-otomatis, bukan screenshot terminal.}
-\end{table}
+Endpoint yang diuji adalah
+\url{https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products}.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,height=.69\textheight,keepaspectratio,
+  trim=545bp 145bp 475bp 140bp,clip]{render-rate-limit.png}
+\caption{Screenshot terminal manual pengujian Render: request 01--20
+memperoleh \code{200}, request 21--30 memperoleh \code{429}, dan assertion
+menyatakan \emph{LULUS}. Durasi 30 request adalah \code{1681 ms},
+di bawah batas 10 detik. Area keluaran diperbesar dari screenshot asli.}
+\label{fig:rate-render}
+\end{figure}
+
+Screenshot dan log mencatat pengujian pada 21 Oktober 2026 mulai
+\code{11:43:50.592 UTC} (18:43:50.592 WIB).
 Hasil aktual tersimpan pada \path{docs/evidence/render/rate-limit.txt} dan
-\path{docs/evidence/render/rate-limit.json}. Dokumen ini memuat delapan
-screenshot dalam urutan lokal, deployment, dan Render. Untuk melengkapi
-sembilan screenshot yang direncanakan, tangkapan terminal rate limit Render
-masih perlu ditambahkan; hasil pengujiannya sudah tersedia pada log di atas.
+\path{docs/evidence/render/rate-limit.json}. Kesembilan screenshot telah
+disusun dalam urutan empat bukti lokal, deployment, lalu empat bukti Render.
 
 \clearpage
 \section{Pembahasan, refleksi, dan referensi}
 \subsection{Pembahasan hasil dan batasan}
 Postman lokal dan Render membuktikan routing kedua service melalui satu alamat
 gateway pada masing-masing lingkungan, serta pemeriksaan key pada pesanan.
-Screenshot terminal lokal dan log otomatis Render membuktikan batas rate limit. Suite otomatis
+Screenshot terminal lokal dan Render membuktikan batas rate limit. Suite otomatis
 melengkapinya dengan verifikasi body POST, GraphQL,
 validasi input, harga katalog, kegagalan upstream, serta batas rate limiting.
 
@@ -452,9 +449,8 @@ beberapa instance memerlukan shared store.
 \item Data demo tersimpan dalam memori. Stok belum direservasi atau dikurangi;
 konsistensi pesanan bersamaan belum dijamin.
 \item Rotasi, pencabutan, scope API key, serta autentikasi pengguna belum diterapkan.
-\item Bukti manual Postman memakai deployment publik, sedangkan demonstrasi
-rate limit dijalankan lokal. Payment, komunikasi asinkron, OAuth2, dan mTLS
-berada di luar ruang lingkup tugas ini.
+\item Payment, komunikasi asinkron, OAuth2, dan mTLS berada di luar ruang
+lingkup tugas ini.
 \end{itemize}
 
 Pada audit 21 Oktober 2026, \code{braces@3.0.3} pada rantai

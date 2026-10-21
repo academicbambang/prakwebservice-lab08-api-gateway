@@ -128,7 +128,7 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 
 ## Berkas pengumpulan
 
-- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): cover, diagram, hasil pengujian lokal, deployment, pengujian Render, dan refleksi. Delapan screenshot disusun mengikuti urutan bukti di bawah; rate limit Render sudah memiliki log berhasil, tetapi screenshot terminalnya belum tersedia.
+- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): cover, diagram, hasil pengujian lokal, deployment, pengujian Render, dan refleksi. Sembilan screenshot disusun mengikuti urutan bukti di bawah.
 - [Sumber LaTeX](docs/latex/main.tex) dan [petunjuk kompilasi](docs/latex/README.md): proyek lengkap dengan gambar di dalam folder `docs/latex`.
 - [Unduh proyek LaTeX lengkap (ZIP)](output/latex/laporan-praktikum-sesi-08-latex.zip): siap diunggah ke Overleaf.
 - [Laporan praktikum](docs/laporan-praktikum-sesi-08.md): implementasi, diagram, prosedur pengujian, dan refleksi.
@@ -137,7 +137,7 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 - `docs/postman`: collection dan environment untuk mengulangi pemeriksaan.
 - [Log pengujian otomatis](docs/evidence/tests.txt): 35 dari 35 test lulus.
 - [Transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json): hasil eksekusi aktual 20 status `200` diikuti 10 status `429`.
-- [Asal screenshot](docs/evidence/README.md): tiga screenshot Postman lokal awal yang dipulihkan dari Git dan lima tangkapan layar manual pengguna pada 21 Oktober 2026.
+- [Asal screenshot](docs/evidence/README.md): tiga screenshot Postman lokal awal yang dipulihkan dari Git dan enam tangkapan layar manual pengguna pada 21 Oktober 2026.
 
 Urutan bukti dalam laporan mengikuti alur lokal, deployment, lalu Render:
 
@@ -151,9 +151,9 @@ Urutan bukti dalam laporan mengikuti alur lokal, deployment, lalu Render:
 | 6 | [Katalog Render](docs/evidence/postman-catalog.png) | Screenshot `200` |
 | 7 | [Pesanan Render dengan key](docs/evidence/postman-orders.png) | Screenshot `200` |
 | 8 | [Pesanan Render tanpa key](docs/evidence/postman-unauthorized.png) | Screenshot `401` |
-| 9 | Rate limit Render | [Log terminal](docs/evidence/render/rate-limit.txt) dan [JSON](docs/evidence/render/rate-limit.json) lulus; **screenshot terminal belum tersedia** |
+| 9 | [Rate limit Render](docs/evidence/render/rate-limit.png) | Screenshot terminal: 20 respons `200`, lalu 10 respons `429`; **LULUS**, durasi 1681 ms; [log](docs/evidence/render/rate-limit.txt) dan [JSON](docs/evidence/render/rate-limit.json) dari eksekusi yang sama |
 
-Screenshot Postman lokal memakai `http://127.0.0.1:8080`, sedangkan screenshot Render memakai `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar `data: []` pada screenshot pesanan berarti belum ada pesanan yang tersimpan saat tangkapan diambil; pengujian pembuatan pesanan tercakup dalam suite otomatis. Screenshot rate limit lokal, log eksekusi terdahulu, dan log verifikasi publik merupakan bukti terpisah. Bukti nomor 9 sudah dicatat sebagai hasil eksekusi, tanpa menggantikan screenshot yang masih perlu diambil.
+Screenshot Postman lokal memakai `http://127.0.0.1:8080`, sedangkan screenshot Render memakai `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar `data: []` pada screenshot pesanan berarti belum ada pesanan yang tersimpan saat tangkapan diambil; pengujian pembuatan pesanan tercakup dalam suite otomatis. Screenshot rate limit lokal, log eksekusi terdahulu, dan log verifikasi publik merupakan bukti terpisah. Screenshot rate limit Render cocok dengan log eksekusi 21 Oktober 2026 yang dimulai pukul `11:43:50.592Z`, selesai dalam 1681 ms, dan lulus.
 
 ## Deployment ke Render
 

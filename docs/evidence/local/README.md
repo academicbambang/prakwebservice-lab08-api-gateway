@@ -11,4 +11,4 @@ Ketiga screenshot Postman di folder ini dipulihkan tanpa perubahan dari commit `
 
 Ketiga screenshot Postman merupakan bukti pengujian lokal sebelumnya. Screenshot rate limit berasal dari pengguna pada 21 Oktober 2026 dan identik dengan gambar `../rate-limit.png`.
 
-Urutan bukti laporan yang akan dilengkapi: empat screenshot lokal, dashboard deployment Render, lalu empat screenshot pengujian Render. Screenshot rate limit Render yang berhasil masih perlu diambil melalui `npm run test:rate-limit:render`.
+Urutan bukti laporan: empat screenshot lokal, dashboard deployment Render, lalu empat screenshot pengujian Render. Kesembilan screenshot sudah tersedia, termasuk [rate limit Render](../render/rate-limit.png) yang diberikan pengguna pada 21 Oktober 2026 dan menunjukkan hasil **LULUS** dalam 1681 ms.

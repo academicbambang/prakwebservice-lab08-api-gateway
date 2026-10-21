@@ -102,11 +102,11 @@ npm run test:rate-limit
 
 Perintah menyiapkan stack baru lalu mengirim 30 request berurutan ke endpoint katalog yang valid. Target bukti adalah 20 status `200` diikuti 10 status `429`. Untuk menguji server yang sudah aktif, gunakan `node gateway/test-rate-limit.js` setelah menunggu setidaknya 10 detik tanpa request dari IP yang sama. Pisahkan demonstrasi ini dari request Postman agar kuota awal tidak terpakai.
 
-Pengujian khusus Render dijalankan melalui `npm run test:rate-limit:render`. Skrip menunggu pemulihan kuota, mengirim 30 request berurutan melalui satu sesi HTTP/2, lalu memeriksa pola 20 respons `200` dan 10 respons `429` beserta penghitung kuotanya dalam durasi kurang dari 10 detik. Hasil yang lulus disimpan dalam `evidence/render/rate-limit.txt` dan `.json`. Screenshot terminal hasil Render masih perlu diambil pengguna.
+Pengujian khusus Render dijalankan melalui `npm run test:rate-limit:render`. Skrip menunggu pemulihan kuota, mengirim 30 request berurutan melalui satu sesi HTTP/2, lalu memeriksa pola 20 respons `200` dan 10 respons `429` beserta penghitung kuotanya dalam durasi kurang dari 10 detik. Hasil yang lulus disimpan dalam `evidence/render/rate-limit.txt` dan `.json`. Screenshot terminal pengguna menunjukkan hasil yang sama: pengujian dimulai `2026-10-21T11:43:50.592Z`, durasi 1681 ms, dan **LULUS**.
 
 ## 5. Bukti pengumpulan dan status verifikasi
 
-Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Delapan screenshot tersedia: tiga screenshot Postman lokal awal yang dipulihkan dari Git dan lima screenshot manual pengguna pada 21 Oktober 2026. Bukti disusun dari empat pengujian lokal, deployment, lalu empat pengujian Render. Bukti kesembilan, rate limit Render, sudah memiliki log berhasil tetapi belum memiliki screenshot terminal.
+Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Sembilan screenshot tersedia: tiga screenshot Postman lokal awal yang dipulihkan dari Git dan enam screenshot manual pengguna pada 21 Oktober 2026. Bukti disusun dari empat pengujian lokal, deployment, lalu empat pengujian Render.
 
 | No. | Pemeriksaan | Hasil aktual | Bukti |
 | --- | --- | --- | --- |
@@ -118,9 +118,9 @@ Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log
 | 6 | Katalog Render: `GET /catalog/products` | `200`, `service: catalog-service`, daftar produk | [Screenshot Render katalog](evidence/postman-catalog.png) |
 | 7 | Pesanan Render: `GET /orders/orders`, key benar | `200`, `service: order-service`, `data: []`, tes 3/3 | [Screenshot Render pesanan](evidence/postman-orders.png) |
 | 8 | Pesanan Render tanpa `X-API-Key` | `401 Unauthorized`, tes 3/3 | [Screenshot Render tanpa key](evidence/postman-unauthorized.png) |
-| 9 | Rate limit Render: `npm run test:rate-limit:render` | 20 respons `200`, lalu 10 respons `429`; **LULUS** | [Log](evidence/render/rate-limit.txt), [JSON](evidence/render/rate-limit.json); **screenshot terminal belum tersedia** |
+| 9 | Rate limit Render: `npm run test:rate-limit:render` | 20 respons `200`, lalu 10 respons `429`; **LULUS**, durasi 1681 ms | [Screenshot terminal Render](evidence/render/rate-limit.png), [log](evidence/render/rate-limit.txt), [JSON](evidence/render/rate-limit.json) |
 
-Screenshot lokal menggunakan `http://127.0.0.1:8080`; ketiga screenshot Postman Render menggunakan satu basis URL HTTPS Render yang sama. Nilai key asli tidak ditampilkan. Ketiga screenshot Postman lokal dipulihkan tanpa perubahan dari commit `3999fbb`. Screenshot rate limiting lokal merupakan tangkapan terminal langsung pengguna. [Log rate limit lokal](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal seluruh gambar dicatat dalam [daftar bukti](evidence/README.md). Log berhasil untuk bukti nomor 9 dicatat sebagai log, tanpa menggantikan screenshot yang masih perlu diambil.
+Screenshot lokal menggunakan `http://127.0.0.1:8080`; ketiga screenshot Postman Render menggunakan satu basis URL HTTPS Render yang sama. Nilai key asli tidak ditampilkan. Ketiga screenshot Postman lokal dipulihkan tanpa perubahan dari commit `3999fbb`. Screenshot rate limiting lokal dan Render merupakan tangkapan terminal langsung pengguna. [Log rate limit lokal](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Screenshot rate limit Render cocok dengan log dan JSON dari eksekusi yang dimulai `2026-10-21T11:43:50.592Z` dan selesai dalam 1681 ms. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal seluruh gambar dicatat dalam [daftar bukti](evidence/README.md).
 
 <details>
 <summary>Lihat tangkapan layar bukti</summary>
@@ -157,9 +157,11 @@ Screenshot lokal menggunakan `http://127.0.0.1:8080`; ketiga screenshot Postman 
 
 ![Postman pesanan Render tanpa API key, status 401](evidence/postman-unauthorized.png)
 
-**9. Rate limit Render - log lulus; screenshot belum tersedia**
+**9. Rate limit Render - 20 respons 200, lalu 10 respons 429**
 
-[Log pengujian Render](evidence/render/rate-limit.txt) dan [data JSON](evidence/render/rate-limit.json) menyimpan 30 respons aktual. Screenshot terminal hasil ini belum tersedia.
+![Terminal VS Code menampilkan pengujian rate limit Render yang lulus dalam 1681 ms](evidence/render/rate-limit.png)
+
+[Log pengujian Render](evidence/render/rate-limit.txt) dan [data JSON](evidence/render/rate-limit.json) menyimpan 30 respons aktual dari eksekusi yang sama, dimulai `2026-10-21T11:43:50.592Z`.
 
 </details>
 

@@ -2,7 +2,7 @@ Uji rate limit Render - Lab 08 (Individu)
 URL: https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products
 Batas: 20 request / 10 detik / IP; 30 request berurutan, satu sesi HTTP/2.
 Menunggu 10 detik + 500 ms agar kuota probe dipulihkan.
-Mulai: 2026-10-21T11:18:06.283Z
+Mulai: 2026-10-21T11:43:50.592Z
 01  200  OK
 02  200  OK
 03  200  OK
@@ -33,5 +33,5 @@ Mulai: 2026-10-21T11:18:06.283Z
 28  429  Too Many Requests
 29  429  Too Many Requests
 30  429  Too Many Requests
-Durasi 30 request: 1705 ms (harus < 10000 ms).
+Durasi 30 request: 1681 ms (harus < 10000 ms).
 LULUS: 20 request pertama 200; request ke-21 s.d. ke-30 429.
