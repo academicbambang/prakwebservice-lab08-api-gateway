@@ -1,0 +1,35 @@
+<!doctype html><html lang="id"><meta charset="utf-8"><title>Bukti rate limit - Lab 08</title><style>body{margin:0;background:#f4f7fa;color:#183b50;font:18px Arial,sans-serif;padding:48px}main{max-width:1020px;margin:auto}h1{font-size:30px;margin:0 0 14px}p{line-height:1.6}pre{padding:30px 36px;background:white;border:1px solid #cbd7df;border-radius:12px;font:19px/1.55 Consolas,monospace;color:#172f40}small{color:#516a79}</style><main><h1>Bukti eksekusi rate limiting - Lab 08</h1><p>Transkrip keluaran <code>npm run test:rate-limit</code>.<br>Bambang Herlambang | 5803024019 | Tugas individu</p><pre>Uji rate limit API Gateway - Lab 08 (Individu)
+URL: http://127.0.0.1:8080/catalog/products
+Batas: 20 request / 10 detik / IP; 30 request berurutan
+01  200  OK
+02  200  OK
+03  200  OK
+04  200  OK
+05  200  OK
+06  200  OK
+07  200  OK
+08  200  OK
+09  200  OK
+10  200  OK
+11  200  OK
+12  200  OK
+13  200  OK
+14  200  OK
+15  200  OK
+16  200  OK
+17  200  OK
+18  200  OK
+19  200  OK
+20  200  OK
+21  429  Too Many Requests
+22  429  Too Many Requests
+23  429  Too Many Requests
+24  429  Too Many Requests
+25  429  Too Many Requests
+26  429  Too Many Requests
+27  429  Too Many Requests
+28  429  Too Many Requests
+29  429  Too Many Requests
+30  429  Too Many Requests
+LULUS: 20 request pertama 200; request ke-21 s.d. ke-30 429.
+</pre><small>Sumber: docs/evidence/rate-limit.txt. Halaman ini menampilkan transkrip eksekusi asli, bukan tangkapan terminal.</small></main></html>

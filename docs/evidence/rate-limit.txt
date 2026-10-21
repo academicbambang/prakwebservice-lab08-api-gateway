@@ -1,0 +1,34 @@
+Uji rate limit API Gateway - Lab 08 (Individu)
+URL: http://127.0.0.1:8080/catalog/products
+Batas: 20 request / 10 detik / IP; 30 request berurutan
+01  200  OK
+02  200  OK
+03  200  OK
+04  200  OK
+05  200  OK
+06  200  OK
+07  200  OK
+08  200  OK
+09  200  OK
+10  200  OK
+11  200  OK
+12  200  OK
+13  200  OK
+14  200  OK
+15  200  OK
+16  200  OK
+17  200  OK
+18  200  OK
+19  200  OK
+20  200  OK
+21  429  Too Many Requests
+22  429  Too Many Requests
+23  429  Too Many Requests
+24  429  Too Many Requests
+25  429  Too Many Requests
+26  429  Too Many Requests
+27  429  Too Many Requests
+28  429  Too Many Requests
+29  429  Too Many Requests
+30  429  Too Many Requests
+LULUS: 20 request pertama 200; request ke-21 s.d. ke-30 429.

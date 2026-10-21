@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="720" viewBox="0 0 1120 720">
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6" fill="none" stroke="#456174" stroke-width="1.5"/></marker></defs>
+  <rect width="1120" height="720" fill="#f5f8fa"/>
+  <g font-family="Arial, sans-serif" fill="#183b50">
+    <text x="50" y="54" font-size="27" font-weight="700">API Gateway - Praktikum Web Service Lab 08</text>
+    <text x="50" y="84" font-size="16" fill="#526d7b">Bambang Herlambang | 5803024019 | Tugas individu</text>
+    <rect x="370" y="114" width="380" height="72" rx="12" fill="#fff" stroke="#bdcdd5"/>
+    <text x="560" y="144" text-anchor="middle" font-size="20" font-weight="700">Klien / Postman</text>
+    <text x="560" y="170" text-anchor="middle" font-size="15">Satu alamat: http://127.0.0.1:8080</text>
+    <path d="M560 186V230" stroke="#456174" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="285" y="235" width="550" height="154" rx="14" fill="#183b50"/>
+    <text x="560" y="272" text-anchor="middle" font-size="23" font-weight="700" fill="#fff">GATEWAY :8080</text>
+    <text x="560" y="304" text-anchor="middle" font-size="17" fill="#d6ecf3">Node.js + Express + http-proxy-middleware</text>
+    <text x="560" y="333" text-anchor="middle" font-size="17" fill="#d6ecf3">Rate limit: 20 request / 10 detik / IP</text>
+    <text x="560" y="361" text-anchor="middle" font-size="17" fill="#d6ecf3">X-API-Key untuk /orders/*; prefix routing dihapus</text>
+    <path d="M425 389V439H280V487" fill="none" stroke="#456174" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M695 389V439H840V487" fill="none" stroke="#456174" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="260" y="422" text-anchor="middle" font-size="16">/catalog/* (publik)</text>
+    <text x="863" y="422" text-anchor="middle" font-size="16">/orders/* (API key)</text>
+    <rect x="70" y="492" width="420" height="130" rx="12" fill="#e0f3ee" stroke="#87b9a8"/>
+    <text x="280" y="525" text-anchor="middle" font-size="21" font-weight="700">Catalog Service :3000</text>
+    <text x="280" y="555" text-anchor="middle" font-size="16">REST /products dan /products/:id</text>
+    <text x="280" y="582" text-anchor="middle" font-size="16">GraphQL /graphql</text>
+    <text x="280" y="607" text-anchor="middle" font-size="14">Produk demo tetap di memori</text>
+    <rect x="630" y="492" width="420" height="130" rx="12" fill="#e6eefc" stroke="#9db0d5"/>
+    <text x="840" y="525" text-anchor="middle" font-size="21" font-weight="700">Order Service :3001</text>
+    <text x="840" y="555" text-anchor="middle" font-size="16">REST GET /orders, GET /orders/:id</text>
+    <text x="840" y="582" text-anchor="middle" font-size="16">POST /orders: validasi dan hitung total</text>
+    <text x="840" y="607" text-anchor="middle" font-size="14">Pesanan in-memory; hilang saat restart</text>
+    <path d="M840 622V662H280V628" fill="none" stroke="#456174" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+    <rect x="362" y="646" width="396" height="30" fill="#f5f8fa"/>
+    <text x="560" y="666" text-anchor="middle" font-size="15">HTTP sinkron: ambil harga dan cek stok katalog</text>
+    <text x="560" y="704" text-anchor="middle" font-size="13" fill="#526d7b">Ketiga proses lokal memakai loopback. Pemeriksaan stok demo belum melakukan reservasi.</text>
+  </g>
+</svg>

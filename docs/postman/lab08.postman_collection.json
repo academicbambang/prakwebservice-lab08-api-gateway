@@ -1,0 +1,306 @@
+{
+  "info": {
+    "name": "Lab 08 API Gateway - Bambang Herlambang",
+    "description": "Tugas individu: dua service melalui port 8080, query/body proxy, API key dan skenario negatif. Rate limiting diuji terpisah agar window bersih.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    },
+    {
+      "key": "productId",
+      "value": "prod-001"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Katalog melalui gateway",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/catalog/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Catalog Service', () => pm.expect(pm.response.json().service).to.eql('catalog-service'));",
+              "pm.test('Produk tersedia', () => pm.expect(pm.response.json().data.length).to.be.above(0));",
+              "pm.collectionVariables.set('productId', pm.response.json().data[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Filter query tetap diteruskan",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/catalog/products?category=kuliner&search=kopi"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Filter katalog', () => pm.expect(pm.response.json().data.map(p => p.id)).to.eql(['prod-001']));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 GraphQL POST body utuh",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/catalog/graphql",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query Catalog($id: ID!) { product(id: $id) { id name price } }\",\n  \"variables\": {\n    \"id\": \"{{productId}}\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Hasil GraphQL', () => { const b = pm.response.json(); pm.expect(b.errors).to.be.undefined; pm.expect(b.data.product.id).to.eql(pm.collectionVariables.get('productId')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Pesanan tanpa API key",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/orders/orders"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Unauthorized', () => pm.expect(pm.response.json().error).to.eql('Unauthorized'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Pesanan dengan API key salah",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "invalid-demo-key",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/orders"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Pesanan melalui gateway",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/orders"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Order Service', () => pm.expect(pm.response.json().service).to.eql('order-service'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Membuat pesanan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerName\": \"Pelanggan Demo\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 2\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('Harga dari katalog', () => pm.expect(pm.response.json().data.total).to.eql(170000));",
+              "pm.collectionVariables.set('orderId', pm.response.json().data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Detail pesanan",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/orders/{{orderId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);",
+              "pm.test('ID pesanan benar', () => pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('orderId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Quantity nol ditolak",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": "{{baseUrl}}/orders/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerName\": \"Pelanggan Demo\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 0\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Route tidak dikenal",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/unknown"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Response JSON', () => pm.response.to.be.json);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

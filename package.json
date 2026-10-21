@@ -1,0 +1,20 @@
+{
+  "name": "prakwebservice-lab08-api-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tugas individu Praktikum Web Service sesi 08: API Gateway katalog dan pesanan",
+  "workspaces": [
+    "gateway",
+    "catalog-service",
+    "order-service"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "start": "node scripts/start.js",
+    "test": "node --test tests/*.test.js",
+    "test:rate-limit": "node scripts/demo-rate-limit.js"
+  }
+}
