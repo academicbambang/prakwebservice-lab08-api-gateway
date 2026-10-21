@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('node:path');
 const { createHash, timingSafeEqual } = require('node:crypto');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { rateLimit, MemoryStore } = require('express-rate-limit');
@@ -55,6 +56,7 @@ function createGateway(config = {}) {
     message: { error: 'Terlalu banyak request. Maksimal 20 request per 10 detik per IP.' },
   });
   app.use(limiter);
+  app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
   app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'gateway' }));
 
   function proxy(prefix, target) {

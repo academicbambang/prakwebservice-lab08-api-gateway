@@ -4,7 +4,7 @@
 
 Demo individu API Gateway menggunakan Node.js dan Express. Satu alamat gateway meneruskan request ke Catalog Service dan Order Service, membatasi request menjadi 20 per 10 detik per IP, serta memeriksa API key pada akses pesanan. Repository tugas praktikum sesi 8 ini dapat dijalankan lokal dan sudah di-deploy ke Render.
 
-**Demo publik Render:** [lihat katalog](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products) atau [periksa readiness](https://prakwebservice-lab08-api-gateway.onrender.com/readyz). Deployment berjalan pada instance Free dan telah diverifikasi, termasuk API key, GraphQL, pembuatan pesanan, serta 20 respons `200` diikuti 10 respons `429`.
+**Demo publik Render:** [halaman utama gateway](https://prakwebservice-lab08-api-gateway.onrender.com/), [lihat katalog](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products), atau [periksa readiness](https://prakwebservice-lab08-api-gateway.onrender.com/readyz). Halaman utama menampilkan ringkasan layanan, tautan endpoint, dan status kesiapan kedua service yang diperiksa saat halaman dibuka. Deployment berjalan pada instance Free dan telah diverifikasi, termasuk API key, GraphQL, pembuatan pesanan, serta 20 respons `200` diikuti 10 respons `429`.
 
 ## Menjalankan
 
