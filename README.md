@@ -126,7 +126,7 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 
 ## Berkas pengumpulan
 
-- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 8 halaman A4, mencakup diagram, hasil pengujian, lima screenshot manual, refleksi, dan deployment publik.
+- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 9 halaman A4 (satu cover dan delapan halaman isi), mencakup diagram, hasil pengujian, lima screenshot manual, refleksi, dan deployment publik.
 - [Sumber LaTeX](docs/latex/main.tex) dan [petunjuk kompilasi](docs/latex/README.md): proyek lengkap dengan gambar di dalam folder `docs/latex`.
 - [Unduh proyek LaTeX lengkap (ZIP)](output/latex/laporan-praktikum-sesi-08-latex.zip): siap diunggah ke Overleaf.
 - [Laporan praktikum](docs/laporan-praktikum-sesi-08.md): implementasi, diagram, prosedur pengujian, dan refleksi.
