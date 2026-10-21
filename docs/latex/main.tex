@@ -41,7 +41,7 @@
   frame=single,rulecolor=\color{line},breaklines=true,columns=fullflexible,
   keepspaces=true,showstringspaces=false,aboveskip=6pt,belowskip=6pt,
   xleftmargin=7pt,xrightmargin=7pt,framexleftmargin=5pt,framexrightmargin=5pt}
-\newcommand{\postmanshot}[1]{\includegraphics[width=.90\linewidth,trim=160bp 12bp 0bp 56bp,clip]{#1}}
+\newcommand{\postmanshot}[2][490bp 260bp 15bp 210bp]{\includegraphics[width=\linewidth,trim=#1,clip]{#2}}
 \begin{document}
 {\color{teal}\small LAPORAN PRAKTIKUM WEB SERVICE SESI 08}\par
 {\color{ink}\LARGE\bfseries API Gateway Sederhana}\par
@@ -65,9 +65,11 @@ request menjadi 20 per 10 detik per alamat IP, serta memeriksa API key pada
 jalur pesanan. Implementasi mengikuti Opsi A Lab 08 dengan Node.js, Express,
 \code{http-proxy-middleware}, dan \code{express-rate-limit}.
 
-Pembuktian awal meliputi akses kedua service melalui port 8080, penolakan
+Pembuktian meliputi akses kedua service melalui satu alamat gateway, penolakan
 akses tanpa key, dan perubahan respons menjadi \code{429} ketika kuota
-terlampaui; deployment publik dilaporkan pada Bagian~\ref{sec:render}.
+terlampaui. Bukti Postman memakai alamat HTTPS Render, sedangkan demonstrasi
+rate limit memakai gateway lokal di port 8080. Susunan deployment publik
+dilaporkan pada Bagian~\ref{sec:render}.
 Tugas dikerjakan secara individu; kedua service dipakai sebagai
 konteks demonstrasi gateway. Materi Web Service menjadi acuan keamanan API key,
 sedangkan materi Software Testing menjadi acuan pengujian batas dan skenario
@@ -212,24 +214,27 @@ tunggu setidaknya 10 detik tanpa request sebelumnya dari IP yang sama.
 
 \clearpage
 \section{Bukti akses kedua service melalui gateway}
-Kedua tangkapan layar menunjukkan port gateway yang sama, yaitu 8080.
-Tampilan dipotong pada tata letak dokumen untuk memperbesar area request dan
-respons; berkas gambar asli tetap tersedia dalam repository.
+Tangkapan layar manual memakai environment \emph{Lab 08 Render} di Postman.
+Variabel \code{baseUrl} pada kedua request menunjuk ke alamat yang sama:
+\url{https://prakwebservice-lab08-api-gateway.onrender.com}.
+Katalog dan pesanan diakses melalui satu gateway HTTPS. Area request dan
+respons diperbesar melalui pemotongan tampilan di LaTeX; gambar asli tetap
+tersedia utuh dalam repository.
 
 \begin{figure}[H]
 \centering
 \postmanshot{postman-catalog.png}
-\caption{Postman: \code{GET /catalog/products?search=kopi} melalui gateway
-menghasilkan \code{200} dan data produk sesuai pencarian.}
+\caption{Postman pada Render: \code{GET /catalog/products} menghasilkan
+\code{200 OK}, \code{service: catalog-service}, dan daftar produk UMKM.}
 \label{fig:catalog}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\postmanshot{postman-orders.png}
-\caption{Postman: \code{GET /orders/orders} dengan key benar menghasilkan
+\postmanshot[490bp 400bp 15bp 210bp]{postman-orders.png}
+\caption{Postman pada Render: \code{GET /orders/orders} dengan key benar menghasilkan
 \code{200}, \code{service: order-service}, dan daftar \code{data: []}.
-Nilai key tidak ditampilkan.}
+Header memakai variabel \code{apiKey}; key asli tidak ditampilkan.}
 \label{fig:orders}
 \end{figure}
 
@@ -237,9 +242,9 @@ Nilai key tidak ditampilkan.}
 \section{Verifikasi autentikasi dan pengujian otomatis}
 \begin{figure}[H]
 \centering
-\postmanshot{postman-unauthorized.png}
-\caption{Postman: request pesanan tanpa header \code{X-API-Key} ditolak
-gateway dengan \code{401 Unauthorized}.}
+\postmanshot[490bp 400bp 15bp 210bp]{postman-unauthorized.png}
+\caption{Postman pada Render: request pesanan tanpa header \code{X-API-Key}
+ditolak gateway dengan \code{401 Unauthorized}; ketiga assertion Postman lulus.}
 \label{fig:unauthorized}
 \end{figure}
 
@@ -263,8 +268,8 @@ Pengujian alur nyata memeriksa katalog dan GraphQL melalui gateway, penolakan
 tanpa key, pembuatan pesanan \code{prod-001} sebanyak dua unit, total
 Rp170.000 dari harga katalog, pengambilan detail melalui header
 \code{Location}, serta daftar pesanan. Daftar kosong pada
-Gambar~\ref{fig:orders} berasal dari proses demo yang baru dijalankan;
-bukti pembuatan pesanan terdapat dalam suite otomatis.
+Gambar~\ref{fig:orders} berarti belum ada pesanan dalam memori saat screenshot
+diambil; bukti pembuatan pesanan terdapat dalam suite otomatis.
 
 Log memuat warning deprecation \code{DEP0060} terkait \code{util._extend}
 pada dependency proxy. Warning tersebut tidak menggagalkan assertion;
@@ -273,30 +278,30 @@ hasil ini tidak dinyatakan sebagai eksekusi tanpa warning.
 \clearpage
 \section{Bukti rate limiting}
 Demonstrasi memakai batas default \textbf{20 request per 10 detik per IP}.
-Skrip mengirim 30 request ke
-\code{http://127.0.0.1:8080/catalog/products} dengan kuota awal yang bersih.
+Perintah \code{npm run test:rate-limit} menyiapkan gateway lokal baru dan
+mengirim 30 request ke \url{http://127.0.0.1:8080/catalog/products} dengan
+kuota awal yang bersih. Bukti ini diambil langsung dari terminal VS Code.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth,height=.77\textheight,keepaspectratio]{rate-limit.png}
-\caption{Tangkapan halaman transkrip keluaran
-\code{npm run test:rate-limit}, bersumber dari log eksekusi asli
-\texttt{docs/evidence/rate-limit.txt}; bukan tangkapan terminal langsung.}
+\includegraphics[width=\linewidth,height=.71\textheight,keepaspectratio,
+  trim=545bp 165bp 625bp 222bp,clip]{rate-limit.png}
+\caption{Screenshot terminal manual: request 01--20 memperoleh \code{200},
+request 21--30 memperoleh \code{429}, dan assertion menyatakan \emph{LULUS}.
+Area keluaran diperbesar; screenshot asli memuat perintah dan batas kuota.}
 \label{fig:rate}
 \end{figure}
 
-Request 1--20 menghasilkan \code{200}; request 21--30 menghasilkan
-\code{429 Too Many Requests}. Assertion skrip menyatakan lulus dan daftar
-status juga disimpan pada \path{docs/evidence/rate-limit.json}.
-Pengujian pemulihan window pada suite otomatis menggunakan window yang
-dipersingkat untuk efisiensi; demonstrasi pada gambar ini memakai
-konfigurasi default 10 detik.
+Demonstrasi manual ini memakai konfigurasi default 10 detik. Log pada
+\path{docs/evidence/rate-limit.txt} dan \path{docs/evidence/rate-limit.json}
+merupakan bukti eksekusi skrip yang tersedia terpisah dari screenshot.
 
 \clearpage
 \section{Pembahasan, refleksi, dan referensi}
 \subsection{Pembahasan hasil dan batasan}
-Postman membuktikan routing melalui satu port dan pemeriksaan key pada
-pesanan. Suite otomatis melengkapinya dengan verifikasi body POST, GraphQL,
+Postman membuktikan routing melalui satu alamat HTTPS dan pemeriksaan key pada
+pesanan. Terminal lokal membuktikan batas rate limit. Suite otomatis
+melengkapinya dengan verifikasi body POST, GraphQL,
 validasi input, harga katalog, kegagalan upstream, serta batas rate limiting.
 
 Batasan implementasi yang masih berlaku:
@@ -306,8 +311,8 @@ beberapa instance memerlukan shared store.
 \item Data demo tersimpan dalam memori. Stok belum direservasi atau dikurangi;
 konsistensi pesanan bersamaan belum dijamin.
 \item Rotasi, pencabutan, scope API key, serta autentikasi pengguna belum diterapkan.
-\item Bukti awal berjalan lokal; deployment publik dibahas pada
-Bagian~\ref{sec:render}. Payment, komunikasi asinkron, OAuth2, dan mTLS
+\item Bukti manual Postman memakai deployment publik, sedangkan demonstrasi
+rate limit dijalankan lokal. Payment, komunikasi asinkron, OAuth2, dan mTLS
 berada di luar ruang lingkup tugas ini.
 \end{itemize}
 
@@ -359,19 +364,25 @@ Gateway telah tersedia melalui HTTPS pada alamat berikut:
 \begin{center}
 \url{https://prakwebservice-lab08-api-gateway.onrender.com}
 \end{center}
-Deployment pertama dari commit \code{196da4b} berhasil pada
-21 Oktober 2026 pukul 13.59 WIB (GMT+7). Satu \emph{Render Free Web Service}
-menjalankan \code{npm start} dengan tiga proses: gateway mendengarkan
-\code{0.0.0.0:PORT} (default Render \code{10000}), sedangkan backend hanya
-mendengarkan loopback pada port 3000 dan 3001. Ketiganya berada dalam satu
-instance layanan, bukan tiga instance terpisah.
+Deployment pertama commit \code{196da4b} berhasil pada 21 Oktober 2026 pukul
+13.59 WIB (GMT+7). Screenshot terbaru menunjukkan commit \code{3999fbb}
+berstatus \emph{Live}, termasuk halaman utama gateway. Satu instance
+\emph{Render Free} menjalankan tiga proses melalui \code{npm start}:
+gateway publik pada \code{0.0.0.0:PORT} dan dua backend pada loopback
+port 3000 serta 3001.
 
 \begin{figure}[H]
-\begin{minipage}[t]{.59\linewidth}
-\vspace{0pt}
-\small
-\textbf{Hasil verifikasi endpoint publik}\par
-\begin{tabularx}{\linewidth}{@{}Y L{2.15cm}@{}}
+\centering
+\includegraphics[width=\linewidth,trim=390bp 250bp 25bp 275bp,clip]{render-dashboard.png}
+\caption{Dashboard Render dari screenshot manual: status \emph{Live},
+URL publik, repository, dan deployment terbaru commit \code{3999fbb} terlihat.
+ID layanan: \texttt{srv-dbc65fbncjis738gmhlg}.}
+\label{fig:render}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}Y L{4.5cm}@{}}
 \toprule
 Pemeriksaan & Hasil aktual\\
 \midrule
@@ -384,34 +395,22 @@ Kuantitas nol / route tidak dikenal & \code{400} / \code{404}\\
 Suite setelah perubahan deployment & 40/40 lulus\\
 \bottomrule
 \end{tabularx}
-\end{minipage}\hfill
-\begin{minipage}[t]{.36\linewidth}
-\vspace{0pt}
-\centering
-\includegraphics[width=\linewidth]{render-dashboard.png}
-\end{minipage}
-\caption{Status layanan \emph{Live} pada dashboard Render dan ringkasan
-verifikasi publik. ID layanan: \texttt{srv-dbc65fbncjis738gmhlg}.}
-\label{fig:render}
-\end{figure}
+\caption{Hasil verifikasi otomatis deployment yang dicatat pada
+\texttt{render-verification.json} dan log suite; terpisah dari screenshot manual.}
+\end{table}
 
-Pembuatan pesanan publik memakai \code{prod-001} sebanyak dua unit dan
-menghasilkan total Rp170.000. Detailnya berhasil dibaca melalui header
-\code{Location}. Pengujian kuota menunggu window bersih; readiness tetap
-\code{200} sesudah API menghasilkan \code{429}, karena \code{/readyz}
-tidak memakai kuota API.
+Verifikasi publik membuat pesanan dua unit \code{prod-001} senilai Rp170.000
+dan membaca detail melalui \code{Location}. Readiness tetap \code{200}
+setelah kuota API habis karena \code{/readyz} berada di luar limiter.
 
-Key deployment acak 256-bit disimpan lokal pada
-\path{gateway/.env.render}, yang diabaikan oleh Git. Klien memakai nilai
-\code{API_KEY} asli sebagai header \code{X-API-Key}; Render hanya menyimpan
-digest \code{API_KEY_SHA256}. Nilai key tidak dicantumkan dalam laporan
-atau bukti publik.
+Key klien tersimpan lokal pada \path{gateway/.env.render} yang diabaikan Git.
+Klien mengirim key asli melalui \code{X-API-Key}; Render hanya menyimpan
+digest \code{API_KEY_SHA256}. Nilai key tidak ditampilkan pada bukti.
 
-Layanan Free dapat tidur setelah 15 menit tanpa trafik; akses pertama
-dapat memerlukan sekitar satu menit untuk aktif kembali. Data pesanan
-berada dalam memori dan hilang ketika proses dimulai ulang. Hasil verifikasi
-publik ada pada \path{docs/evidence/render-verification.json} dan
-\path{docs/evidence/render-verification.txt}; hasil suite terbaru
-\textbf{40 test lulus, 0 gagal} ada pada
-\path{docs/evidence/tests-deployment.txt}.
+Layanan Free dapat tidur saat tidak digunakan; akses awal membutuhkan waktu
+untuk aktif kembali dan data memori hilang ketika proses dimulai ulang.
+Log verifikasi publik ada pada \path{docs/evidence/render-verification.json}
+dan \path{docs/evidence/render-verification.txt}. Log
+\path{docs/evidence/tests-deployment.txt} mencatat
+\textbf{40 test lulus, 0 gagal}.
 \end{document}

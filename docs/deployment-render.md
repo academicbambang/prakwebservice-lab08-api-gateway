@@ -6,9 +6,12 @@
 - [Katalog publik](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products) dan [kesiapan layanan](https://prakwebservice-lab08-api-gateway.onrender.com/readyz).
 - [Dashboard Render](https://dashboard.render.com/web/srv-dbc65fbncjis738gmhlg).
 - Deployment pertama: commit `196da4b`, 21 Oktober 2026 pukul 13:59 (UTC+7).
-- [Bukti status live](evidence/render-dashboard.png), [log verifikasi publik](evidence/render-verification.txt), dan [hasil JSON](evidence/render-verification.json).
+- Deployment terbaru pada screenshot manual: commit `3999fbb`, berstatus **Live**, termasuk halaman utama gateway.
+- [Bukti status Live terbaru](evidence/render-dashboard.png), [log verifikasi publik deployment pertama](evidence/render-verification.txt), dan [hasil JSON](evidence/render-verification.json).
 
 Konfigurasi yang dapat direproduksi tersedia pada [`render.yaml`](../render.yaml). Pengujian lokal terbaru lulus **40/40**, sesuai [log deployment](evidence/tests-deployment.txt).
+
+Tabel berikut merangkum verifikasi otomatis pada deployment pertama. Log aslinya dipertahankan sebagai arsip; screenshot manual terbaru merupakan pengujian terpisah.
 
 | Pemeriksaan publik | Hasil |
 | --- | --- |
@@ -22,7 +25,9 @@ Konfigurasi yang dapat direproduksi tersedia pada [`render.yaml`](../render.yaml
 | 30 request katalog pada window bersih | 20 kali `200`, kemudian 10 kali `429` |
 | Readiness setelah kuota API habis | Tetap `200` |
 
-![Render menunjukkan Deploy succeeded dan Live](evidence/render-dashboard.png)
+![Dashboard Render menunjukkan deployment terbaru commit 3999fbb berstatus Live](evidence/render-dashboard.png)
+
+Screenshot Postman manual dari pengguna pada 21 Oktober 2026 menunjukkan katalog `200`, pesanan dengan key `200` (`data: []` saat tangkapan diambil), dan pesanan tanpa key `401`. Ketiganya memakai basis URL HTTPS Render yang sama pada port standar `443`. [Screenshot rate limit](evidence/rate-limit.png) berasal dari terminal VS Code saat menjalankan `npm run test:rate-limit` secara lokal, dengan 20 respons `200`, lalu 10 respons `429`, dan **LULUS**. Rincian asal gambar tersedia pada [daftar bukti manual](evidence/README.md).
 
 ## Susunan deployment
 
@@ -99,12 +104,12 @@ Untuk Postman, import [`render.postman_environment.json`](postman/render.postman
 6. `POST /orders/orders` dengan key: `201`, total dihitung dari katalog; ikuti header `Location` untuk membaca detail.
 7. Setelah window bersih, kirim 30 request cepat ke katalog: 20 respons `200`, kemudian 10 respons `429`.
 
-Simpan bukti deployment terpisah dari bukti localhost pada `docs/evidence`. Pastikan API key tidak tampak di screenshot atau berkas yang di-commit.
+Bedakan bukti URL publik Render dari pengujian rate limit lokal pada `docs/evidence`. Pastikan API key tidak tampak di screenshot atau berkas yang di-commit.
 
 ## Batasan demo
 
 Data pesanan dan kuota rate limit berada dalam memori. Keduanya direset saat instance restart, redeploy, atau tidur. Render Free dapat tidur setelah tidak ada trafik dan memerlukan waktu untuk aktif kembali; tunggu hingga `/readyz` normal sebelum menguji 30 request.
 
-Laporan membedakan pengujian lokal awal dari verifikasi publik sesudah deployment. Bukti localhost tetap dipertahankan; hasil publik tersimpan pada berkas `render-verification` yang terpisah.
+Laporan membedakan screenshot Postman publik dan dashboard terbaru, screenshot rate limit lokal, serta log eksekusi terdahulu. Hasil verifikasi publik deployment pertama tetap tersimpan pada berkas `render-verification` yang terpisah.
 
 Referensi: [Render Node/Express](https://render.com/docs/deploy-node-express-app), [Blueprint](https://render.com/docs/blueprint-spec), [batasan Free](https://render.com/docs/free), dan [health checks](https://render.com/docs/health-checks).

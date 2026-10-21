@@ -110,7 +110,7 @@ Untuk demonstrasi 30 request, **hentikan stack `npm start` terlebih dahulu**, la
 npm run test:rate-limit
 ```
 
-Skrip menyiapkan stack baru sehingga kuota IP belum terpakai. Eksekusi aktual telah menghasilkan request 1-20 berstatus `200` dan request 21-30 berstatus `429`; hasil lengkap ada pada [transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json). Jika ingin menguji server yang sudah berjalan, gunakan `node gateway/test-rate-limit.js`; tunggu setidaknya 10 detik tanpa request dari IP yang sama sebelum memulai agar window sebelumnya berakhir.
+Skrip menyiapkan stack lokal baru sehingga kuota IP belum terpakai. [Screenshot terminal manual](docs/evidence/rate-limit.png) menunjukkan request 1-20 berstatus `200`, request 21-30 berstatus `429`, dan hasil **LULUS**. [Transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json) menyimpan hasil eksekusi terdahulu yang terpisah, dengan pola status yang sama. Jika ingin menguji server yang sudah berjalan, gunakan `node gateway/test-rate-limit.js`; tunggu setidaknya 10 detik tanpa request dari IP yang sama sebelum memulai agar window sebelumnya berakhir.
 
 Import collection dan environment dari `docs/postman` ke Postman. Pilih environment lokal, isi `apiKey` dari `gateway/.env` (nilai di file environment sengaja kosong), lalu jalankan katalog dan pesanan dengan basis URL gateway yang sama. Gunakan Postman untuk mengambil screenshot aktual yang menampilkan method, URL, status, dan body; jangan tampilkan nilai header secret.
 
@@ -118,21 +118,23 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 
 ## Berkas pengumpulan
 
-- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 8 halaman A4, mencakup diagram, hasil pengujian, bukti Postman, rate limit, refleksi, dan deployment publik.
+- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 8 halaman A4, mencakup diagram, hasil pengujian, lima screenshot manual, refleksi, dan deployment publik.
 - [Sumber LaTeX](docs/latex/main.tex) dan [petunjuk kompilasi](docs/latex/README.md): proyek lengkap dengan gambar di dalam folder `docs/latex`.
 - [Unduh proyek LaTeX lengkap (ZIP)](output/latex/laporan-praktikum-sesi-08-latex.zip): siap diunggah ke Overleaf.
 - [Laporan praktikum](docs/laporan-praktikum-sesi-08.md): implementasi, diagram, prosedur pengujian, dan refleksi.
 - Diagram arsitektur: [PNG](docs/arsitektur.png) dan [SVG](docs/arsitektur.svg).
 - `gateway/gateway.js` dan `gateway/package.json`: kode serta dependensi gateway.
 - `docs/postman`: collection dan environment untuk mengulangi pemeriksaan.
-- [Screenshot Postman katalog](docs/evidence/postman-catalog.png): request `GET /catalog/products?search=kopi` melalui port gateway `8080` menghasilkan `200`.
-- [Screenshot Postman pesanan](docs/evidence/postman-orders.png): request `GET /orders/orders` melalui port gateway `8080` menghasilkan `200` dengan key benar; nilai key disembunyikan.
-- [Screenshot Postman tanpa key](docs/evidence/postman-unauthorized.png): request pesanan ditolak `401`.
+- [Screenshot Postman katalog](docs/evidence/postman-catalog.png): request `GET /catalog/products` melalui URL HTTPS Render menghasilkan `200`.
+- [Screenshot Postman pesanan](docs/evidence/postman-orders.png): request `GET /orders/orders` melalui URL HTTPS Render yang sama menghasilkan `200` dengan key benar; nilai key asli tidak ditampilkan.
+- [Screenshot Postman tanpa key](docs/evidence/postman-unauthorized.png): request pesanan pada URL HTTPS Render ditolak `401`, dengan 3/3 tes Postman lulus.
 - [Log pengujian otomatis](docs/evidence/tests.txt): 35 dari 35 test lulus.
 - [Transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json): hasil eksekusi aktual 20 status `200` diikuti 10 status `429`.
-- [Screenshot rate limit](docs/evidence/rate-limit.png): screenshot [halaman transkrip](docs/evidence/rate-limit.html) yang bersumber dari `rate-limit.txt`, bukan tangkapan terminal langsung.
+- [Screenshot rate limit](docs/evidence/rate-limit.png): tangkapan langsung terminal VS Code saat menjalankan `npm run test:rate-limit` pada stack lokal; 20 respons `200`, lalu 10 respons `429`, dan **LULUS**.
+- [Screenshot Render](docs/evidence/render-dashboard.png): deployment terbaru commit `3999fbb` berstatus **Live**.
+- [Asal screenshot manual](docs/evidence/README.md): lima tangkapan layar pengguna pada 21 Oktober 2026.
 
-Seluruh bukti di atas berasal dari eksekusi aktual dan tersedia dalam repository. Screenshot pesanan menampilkan daftar kosong dari proses demo yang baru dijalankan; pengujian pembuatan pesanan tercakup dalam suite otomatis.
+Screenshot Postman memakai satu basis URL `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar `data: []` pada screenshot pesanan berarti belum ada pesanan yang tersimpan saat tangkapan diambil; pengujian pembuatan pesanan tercakup dalam suite otomatis. Screenshot rate limit lokal, log eksekusi terdahulu, dan log verifikasi publik merupakan bukti terpisah.
 
 ## Deployment ke Render
 
