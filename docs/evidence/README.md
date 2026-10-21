@@ -1,4 +1,20 @@
-# Asal screenshot manual
+# Asal dan urutan screenshot
+
+Laporan memuat delapan screenshot dengan urutan empat bukti lokal, satu bukti deployment, lalu tiga bukti Postman Render. Pengujian rate limit Render sudah lulus dan memiliki log, tetapi screenshot terminalnya belum tersedia. Status sembilan bukti yang dituju:
+
+| No. | Bukti | Berkas / status |
+| --- | --- | --- |
+| 1 | Katalog lokal `200` | [local/postman-catalog.png](local/postman-catalog.png) |
+| 2 | Pesanan lokal dengan key `200` | [local/postman-orders.png](local/postman-orders.png) |
+| 3 | Pesanan lokal tanpa key `401` | [local/postman-unauthorized.png](local/postman-unauthorized.png) |
+| 4 | Rate limit lokal, **LULUS** | [rate-limit.png](rate-limit.png) |
+| 5 | Deployment Render **Live** | [render-dashboard.png](render-dashboard.png) |
+| 6 | Katalog Render `200` | [postman-catalog.png](postman-catalog.png) |
+| 7 | Pesanan Render dengan key `200` | [postman-orders.png](postman-orders.png) |
+| 8 | Pesanan Render tanpa key `401` | [postman-unauthorized.png](postman-unauthorized.png) |
+| 9 | Rate limit Render, **LULUS** | [Log](render/rate-limit.txt), [JSON](render/rate-limit.json); **screenshot terminal belum tersedia** |
+
+## Lima screenshot manual pengguna
 
 Lima screenshot berikut diberikan pengguna melalui percakapan pada **21 Oktober 2026**. Berkas disalin dari gambar asli ke repository tanpa pemotongan, penyamaran, atau perubahan isi; ukuran masing-masing **1920 × 1200 piksel**. Salinan untuk laporan LaTeX berada di `docs/latex/images`.
 
@@ -16,6 +32,6 @@ Ketiga screenshot Postman memakai satu basis URL `https://prakwebservice-lab08-a
 
 ## Pelengkapan bukti lokal dan Render
 
-Tiga screenshot Postman lokal awal dipulihkan dari Git ke folder [`local`](local/README.md), beserta salinan screenshot terminal rate limit lokal. Dengan empat bukti lokal, dashboard deployment, dan tiga screenshot Postman Render, delapan screenshot sudah tersedia untuk urutan laporan: lokal (empat), deployment Render (satu), lalu pengujian Render (empat).
+Tiga screenshot Postman lokal awal dipulihkan tanpa perubahan dari commit Git `3999fbb` ke folder [`local`](local/README.md), beserta salinan screenshot terminal rate limit lokal. Ketiganya memakai gateway `http://127.0.0.1:8080`, dan merupakan bukti eksekusi lokal sebelum gambar utama diganti oleh screenshot Render. Screenshot lokal tidak diberi label sebagai screenshot manual terbaru dari pengguna.
 
-Screenshot terminal rate limit Render masih perlu diambil pengguna. Jalankan `npm run test:rate-limit:render`; pengujian memakai satu sesi HTTP/2, menunggu pemulihan kuota probe, dan memeriksa 30 respons aktual beserta penghitung kuotanya. Log yang lulus disimpan ke `render/rate-limit.txt` dan `render/rate-limit.json`. Log ini merupakan bukti eksekusi, bukan screenshot terminal.
+Dengan empat screenshot lokal, dashboard deployment, dan tiga screenshot Postman Render, delapan screenshot sudah dimasukkan ke laporan. Screenshot terminal rate limit Render masih perlu diambil pengguna agar sembilan bukti lengkap dalam bentuk screenshot. Jalankan `npm run test:rate-limit:render`; pengujian memakai satu sesi HTTP/2, menunggu pemulihan kuota probe, dan memeriksa 30 respons aktual beserta penghitung kuotanya. Log yang lulus disimpan ke `render/rate-limit.txt` dan `render/rate-limit.json`. Log ini dicatat sebagai bukti eksekusi, tanpa menggantikan screenshot terminal yang belum tersedia.

@@ -39,6 +39,7 @@
   frame=single,rulecolor=\color{line},breaklines=true,columns=fullflexible,
   keepspaces=true,showstringspaces=false,aboveskip=6pt,belowskip=6pt,
   xleftmargin=7pt,xrightmargin=7pt,framexleftmargin=5pt,framexrightmargin=5pt}
+\newcommand{\localshot}[2][160bp 10bp 5bp 67bp]{\includegraphics[width=\linewidth,trim=#1,clip]{#2}}
 \newcommand{\postmanshot}[2][490bp 260bp 15bp 210bp]{\includegraphics[width=\linewidth,trim=#1,clip]{#2}}
 \begin{document}
 \hypersetup{pageanchor=false}
@@ -95,18 +96,21 @@ jalur pesanan. Implementasi mengikuti Opsi A Lab 08 dengan Node.js, Express,
 
 Pembuktian meliputi akses kedua service melalui satu alamat gateway, penolakan
 akses tanpa key, dan perubahan respons menjadi \code{429} ketika kuota
-terlampaui. Bukti Postman memakai alamat HTTPS Render, sedangkan demonstrasi
-rate limit memakai gateway lokal di port 8080. Susunan deployment publik
+terlampaui. Bukti Postman mencakup gateway lokal di port 8080 dan alamat HTTPS Render.
+Rate limit lokal dibuktikan dengan screenshot terminal; verifikasi Render
+dicatat dalam log otomatis. Susunan deployment publik
 dilaporkan pada Bagian~\ref{sec:render}.
-Tugas dikerjakan secara individu; kedua service dipakai sebagai
-konteks demonstrasi gateway. Materi Web Service menjadi acuan keamanan API key,
+Tugas dikerjakan secara individu sebagai implementasi sebagian rancangan
+Marketplace UMKM Kelompok D, dengan fokus pada API Gateway, Catalog Service,
+dan Order Service. Materi Web Service menjadi acuan keamanan API key,
 sedangkan materi Software Testing menjadi acuan pengujian batas dan skenario
 negatif.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=.94\linewidth]{arsitektur.png}
-\caption{Arsitektur implementasi lokal. Order Service mengambil harga dan
+\caption{Arsitektur implementasi lokal sebagai penyederhanaan rancangan Marketplace
+UMKM Kelompok D. Order Service mengambil harga dan
 memeriksa stok melalui panggilan HTTP sinkron ke Catalog Service.}
 \label{fig:arsitektur}
 \end{figure}
@@ -241,39 +245,37 @@ Jika menguji server yang sudah aktif dengan \code{node gateway/test-rate-limit.j
 tunggu setidaknya 10 detik tanpa request sebelumnya dari IP yang sama.
 
 \clearpage
-\section{Bukti akses kedua service melalui gateway}
-Tangkapan layar manual memakai environment \emph{Lab 08 Render} di Postman.
-Variabel \code{baseUrl} pada kedua request menunjuk ke alamat yang sama:
-\url{https://prakwebservice-lab08-api-gateway.onrender.com}.
-Katalog dan pesanan diakses melalui satu gateway HTTPS. Area request dan
-respons diperbesar melalui pemotongan tampilan di LaTeX; gambar asli tetap
-tersedia utuh dalam repository.
+\section{Bukti pengujian lokal}
+Urutan bukti dimulai dari lingkungan lokal, dilanjutkan deployment, lalu
+pengujian pada Render. Screenshot berikut memakai satu alamat gateway,
+\code{http://127.0.0.1:8080}. Katalog dan pesanan diteruskan ke service yang
+berbeda. Bukti Postman lokal berasal dari pengujian awal yang tersimpan
+dalam repository.
 
 \begin{figure}[H]
 \centering
-\postmanshot{postman-catalog.png}
-\caption{Postman pada Render: \code{GET /catalog/products} menghasilkan
-\code{200 OK}, \code{service: catalog-service}, dan daftar produk UMKM.}
-\label{fig:catalog}
+\localshot{local-postman-catalog.png}
+\caption{Lokal: \code{GET /catalog/products?search=kopi} menghasilkan
+\code{200 OK}, \code{service: catalog-service}, dan produk sesuai pencarian.}
+\label{fig:catalog-local}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\postmanshot[490bp 400bp 15bp 210bp]{postman-orders.png}
-\caption{Postman pada Render: \code{GET /orders/orders} dengan key benar menghasilkan
-\code{200}, \code{service: order-service}, dan daftar \code{data: []}.
-Header memakai variabel \code{apiKey}; key asli tidak ditampilkan.}
-\label{fig:orders}
+\localshot[160bp 110bp 5bp 67bp]{local-postman-orders.png}
+\caption{Lokal: \code{GET /orders/orders} dengan key benar menghasilkan
+\code{200 OK}, \code{service: order-service}, dan daftar pesanan kosong.}
+\label{fig:orders-local}
 \end{figure}
 
 \clearpage
-\section{Verifikasi autentikasi dan pengujian otomatis}
+\section{Verifikasi autentikasi lokal dan pengujian otomatis}
 \begin{figure}[H]
 \centering
-\postmanshot[490bp 400bp 15bp 210bp]{postman-unauthorized.png}
-\caption{Postman pada Render: request pesanan tanpa header \code{X-API-Key}
-ditolak gateway dengan \code{401 Unauthorized}; ketiga assertion Postman lulus.}
-\label{fig:unauthorized}
+\localshot[160bp 110bp 5bp 67bp]{local-postman-unauthorized.png}
+\caption{Lokal: request pesanan tanpa header \code{X-API-Key} ditolak
+gateway dengan \code{401 Unauthorized}.}
+\label{fig:unauthorized-local}
 \end{figure}
 
 \subsection{Hasil suite otomatis}
@@ -296,7 +298,7 @@ Pengujian alur nyata memeriksa katalog dan GraphQL melalui gateway, penolakan
 tanpa key, pembuatan pesanan \code{prod-001} sebanyak dua unit, total
 Rp170.000 dari harga katalog, pengambilan detail melalui header
 \code{Location}, serta daftar pesanan. Daftar kosong pada
-Gambar~\ref{fig:orders} berarti belum ada pesanan dalam memori saat screenshot
+Gambar~\ref{fig:orders-local} berarti belum ada pesanan dalam memori saat screenshot
 diambil; bukti pembuatan pesanan terdapat dalam suite otomatis.
 
 Log memuat warning deprecation \code{DEP0060} terkait \code{util._extend}
@@ -304,7 +306,7 @@ pada dependency proxy. Warning tersebut tidak menggagalkan assertion;
 hasil ini tidak dinyatakan sebagai eksekusi tanpa warning.
 
 \clearpage
-\section{Bukti rate limiting}
+\section{Bukti rate limiting lokal}
 Demonstrasi memakai batas default \textbf{20 request per 10 detik per IP}.
 Perintah \code{npm run test:rate-limit} menyiapkan gateway lokal baru dan
 mengirim 30 request ke \url{http://127.0.0.1:8080/catalog/products} dengan
@@ -323,67 +325,6 @@ Area keluaran diperbesar; screenshot asli memuat perintah dan batas kuota.}
 Demonstrasi manual ini memakai konfigurasi default 10 detik. Log pada
 \path{docs/evidence/rate-limit.txt} dan \path{docs/evidence/rate-limit.json}
 merupakan bukti eksekusi skrip yang tersedia terpisah dari screenshot.
-
-\clearpage
-\section{Pembahasan, refleksi, dan referensi}
-\subsection{Pembahasan hasil dan batasan}
-Postman membuktikan routing melalui satu alamat HTTPS dan pemeriksaan key pada
-pesanan. Terminal lokal membuktikan batas rate limit. Suite otomatis
-melengkapinya dengan verifikasi body POST, GraphQL,
-validasi input, harga katalog, kegagalan upstream, serta batas rate limiting.
-
-Batasan implementasi yang masih berlaku:
-\begin{itemize}
-\item Penghitung request berada pada memori satu proses dan direset saat restart;
-beberapa instance memerlukan shared store.
-\item Data demo tersimpan dalam memori. Stok belum direservasi atau dikurangi;
-konsistensi pesanan bersamaan belum dijamin.
-\item Rotasi, pencabutan, scope API key, serta autentikasi pengguna belum diterapkan.
-\item Bukti manual Postman memakai deployment publik, sedangkan demonstrasi
-rate limit dijalankan lokal. Payment, komunikasi asinkron, OAuth2, dan mTLS
-berada di luar ruang lingkup tugas ini.
-\end{itemize}
-
-Pada audit 21 Oktober 2026, \code{braces@3.0.3} pada rantai
-\code{http-proxy-middleware -> micromatch -> braces} masih tercatat pada
-advisory \href{https://github.com/advisories/GHSA-vfj7-8cjw-p6xm}{GHSA-vfj7-8cjw-p6xm}
-tanpa versi perbaikan. Gateway menggunakan \code{pathFilter} berupa fungsi
-dengan prefix statis, sehingga jalur pencocokan glob tersebut tidak digunakan
-oleh routing ini. Temuan dependency tetap dicatat; hasil audit tidak
-dinyatakan bersih.
-
-\subsection{Refleksi}
-Klien cukup mengetahui satu alamat gateway untuk mengakses katalog dan
-pesanan. Perubahan alamat atau port service dapat dilakukan melalui
-konfigurasi gateway tanpa mengubah alamat yang dipakai klien. Penerapan rate
-limit dan pemeriksaan API key di pintu masuk membuat kebijakan akses lebih
-mudah dipantau secara konsisten. Jika gateway mati, kedua service tidak
-dapat diakses melalui alamat tersebut sehingga gateway menjadi titik
-kegagalan yang perlu ditangani pada pengembangan berikutnya.
-
-\subsection{Kaitan dengan materi}
-Materi Web Service sesi 8 menjadi acuan header API key dan penyimpanan secret
-di environment. Materi Software Testing sesi 8 memberi dasar BVA, assertion,
-jalur negatif, serta prinsip pengujian yang independen dan dapat diulang.
-Framework aktual laporan ini adalah \code{node:test}; tugas Java/JUnit
-dan rancangan keamanan proyek UAS merupakan penugasan terpisah.
-
-\subsection{Referensi dan lokasi berkas}
-{\small
-\begin{enumerate}[leftmargin=1.5em,itemsep=3pt,topsep=3pt]
-\item Philipus Suryo Subandoro. \emph{Praktikum Web Service Lab 08:
-API Gateway Sederhana}. Materi lokal: \path{materi/2prakwebservice/sesi8.txt}.
-\item Philipus Suryo Subandoro. \emph{Web Service Sesi 08:
-Keamanan Lanjutan dan Kick-off Proyek}. \path{materi/1webservice/sesi8.txt}.
-\item Philipus Suryo Subandoro. \emph{Software Testing Sesi 08:
-Unit Testing (JUnit)}. \path{materi/3softwaretesting/sesi8.txt}.
-\item Dokumentasi resmi \emph{http-proxy-middleware}:
-\url{https://github.com/chimurai/http-proxy-middleware}.
-\item Dokumentasi resmi \emph{express-rate-limit}:
-\url{https://express-rate-limit.mintlify.app/reference/configuration}.
-\item \href{https://github.com/academicbambang/prakwebservice-lab08-api-gateway}{Repository kode, collection Postman, dan bukti pengujian (GitHub).}
-\end{enumerate}
-}
 
 \clearpage
 \section{Deployment publik pada Render}
@@ -441,4 +382,134 @@ Log verifikasi publik ada pada \path{docs/evidence/render-verification.json}
 dan \path{docs/evidence/render-verification.txt}. Log
 \path{docs/evidence/tests-deployment.txt} mencatat
 \textbf{40 test lulus, 0 gagal}.
+
+\clearpage
+\section{Bukti pengujian pada Render}
+Tangkapan layar manual memakai environment \emph{Lab 08 Render} di Postman.
+Variabel \code{baseUrl} pada kedua request menunjuk ke alamat yang sama:
+\url{https://prakwebservice-lab08-api-gateway.onrender.com}.
+Katalog dan pesanan diakses melalui satu gateway HTTPS. Area request dan
+respons diperbesar melalui pemotongan tampilan di LaTeX; gambar asli tetap
+tersedia utuh dalam repository.
+
+\begin{figure}[H]
+\centering
+\postmanshot{postman-catalog.png}
+\caption{Postman pada Render: \code{GET /catalog/products} menghasilkan
+\code{200 OK}, \code{service: catalog-service}, dan daftar produk UMKM.}
+\label{fig:catalog}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\postmanshot[490bp 400bp 15bp 210bp]{postman-orders.png}
+\caption{Postman pada Render: \code{GET /orders/orders} dengan key benar menghasilkan
+\code{200}, \code{service: order-service}, dan daftar \code{data: []}.
+Header memakai variabel \code{apiKey}; key asli tidak ditampilkan.}
+\label{fig:orders}
+\end{figure}
+
+\clearpage
+\section{Verifikasi API key dan rate limit pada Render}
+\begin{figure}[H]
+\centering
+\postmanshot[490bp 400bp 15bp 210bp]{postman-unauthorized.png}
+\caption{Postman pada Render: request pesanan tanpa header \code{X-API-Key}
+ditolak gateway dengan \code{401 Unauthorized}; ketiga assertion Postman lulus.}
+\label{fig:unauthorized}
+\end{figure}
+
+\subsection{Verifikasi otomatis rate limit Render}
+Pengujian URL publik dijalankan dengan \code{npm run test:rate-limit:render}.
+Skrip mengaktifkan layanan melalui \code{/readyz}, menunggu pemulihan kuota
+probe katalog, lalu mengirim 30 request berurutan melalui satu sesi HTTP/2.
+Assertion memeriksa status, penghitung sisa kuota, dan durasi kurang dari
+10 detik. Pengaturan kuota gateway tetap 20 request per 10 detik per IP.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}L{5.3cm}Y@{}}
+\toprule
+Pemeriksaan & Hasil aktual pada log\\
+\midrule
+Lingkungan / protokol & URL HTTPS Render / HTTP/2\\
+Request 01--20 & \code{200 OK}\\
+Request 21--30 & \code{429 Too Many Requests}\\
+Durasi 30 request & \code{1705 ms}\\
+Penghitung sisa kuota & 19 turun ke 0, lalu tetap 0\\
+Assertion & \code{LULUS}\\
+\bottomrule
+\end{tabularx}
+\caption{Ringkasan log rate limit Render; tabel ini merupakan bukti log
+otomatis, bukan screenshot terminal.}
+\end{table}
+
+Hasil aktual tersimpan pada \path{docs/evidence/render/rate-limit.txt} dan
+\path{docs/evidence/render/rate-limit.json}. Dokumen ini memuat delapan
+screenshot dalam urutan lokal, deployment, dan Render. Untuk melengkapi
+sembilan screenshot yang direncanakan, tangkapan terminal rate limit Render
+masih perlu ditambahkan; hasil pengujiannya sudah tersedia pada log di atas.
+
+\clearpage
+\section{Pembahasan, refleksi, dan referensi}
+\subsection{Pembahasan hasil dan batasan}
+Postman lokal dan Render membuktikan routing kedua service melalui satu alamat
+gateway pada masing-masing lingkungan, serta pemeriksaan key pada pesanan.
+Screenshot terminal lokal dan log otomatis Render membuktikan batas rate limit. Suite otomatis
+melengkapinya dengan verifikasi body POST, GraphQL,
+validasi input, harga katalog, kegagalan upstream, serta batas rate limiting.
+
+Batasan implementasi yang masih berlaku:
+\begin{itemize}
+\item Penghitung request berada pada memori satu proses dan direset saat restart;
+beberapa instance memerlukan shared store.
+\item Data demo tersimpan dalam memori. Stok belum direservasi atau dikurangi;
+konsistensi pesanan bersamaan belum dijamin.
+\item Rotasi, pencabutan, scope API key, serta autentikasi pengguna belum diterapkan.
+\item Bukti manual Postman memakai deployment publik, sedangkan demonstrasi
+rate limit dijalankan lokal. Payment, komunikasi asinkron, OAuth2, dan mTLS
+berada di luar ruang lingkup tugas ini.
+\end{itemize}
+
+Pada audit 21 Oktober 2026, \code{braces@3.0.3} pada rantai
+\code{http-proxy-middleware -> micromatch -> braces} masih tercatat pada
+advisory \href{https://github.com/advisories/GHSA-vfj7-8cjw-p6xm}{GHSA-vfj7-8cjw-p6xm}
+tanpa versi perbaikan. Gateway menggunakan \code{pathFilter} berupa fungsi
+dengan prefix statis, sehingga jalur pencocokan glob tersebut tidak digunakan
+oleh routing ini. Temuan dependency tetap dicatat; hasil audit tidak
+dinyatakan bersih.
+
+\subsection{Refleksi}
+Klien cukup mengetahui satu alamat gateway untuk mengakses katalog dan
+pesanan. Perubahan alamat atau port service dapat dilakukan melalui
+konfigurasi gateway tanpa mengubah alamat yang dipakai klien. Penerapan rate
+limit dan pemeriksaan API key di pintu masuk membuat kebijakan akses lebih
+mudah dipantau secara konsisten. Jika gateway mati, kedua service tidak
+dapat diakses melalui alamat tersebut sehingga gateway menjadi titik
+kegagalan yang perlu ditangani pada pengembangan berikutnya.
+
+\subsection{Kaitan dengan materi}
+Materi Web Service sesi 8 menjadi acuan header API key dan penyimpanan secret
+di environment. Materi Software Testing sesi 8 memberi dasar BVA, assertion,
+jalur negatif, serta prinsip pengujian yang independen dan dapat diulang.
+Framework aktual laporan ini adalah \code{node:test}; tugas Java/JUnit
+dan rancangan keamanan proyek UAS merupakan penugasan terpisah.
+
+\subsection{Referensi dan lokasi berkas}
+{\small
+\begin{enumerate}[leftmargin=1.5em,itemsep=3pt,topsep=3pt]
+\item Philipus Suryo Subandoro. \emph{Praktikum Web Service Lab 08:
+API Gateway Sederhana}. Materi lokal: \path{materi/2prakwebservice/sesi8.txt}.
+\item Philipus Suryo Subandoro. \emph{Web Service Sesi 08:
+Keamanan Lanjutan dan Kick-off Proyek}. \path{materi/1webservice/sesi8.txt}.
+\item Philipus Suryo Subandoro. \emph{Software Testing Sesi 08:
+Unit Testing (JUnit)}. \path{materi/3softwaretesting/sesi8.txt}.
+\item Dokumentasi resmi \emph{http-proxy-middleware}:
+\url{https://github.com/chimurai/http-proxy-middleware}.
+\item Dokumentasi resmi \emph{express-rate-limit}:
+\url{https://express-rate-limit.mintlify.app/reference/configuration}.
+\item \href{https://github.com/academicbambang/prakwebservice-lab08-api-gateway}{Repository kode, collection Postman, dan bukti pengujian (GitHub).}
+\end{enumerate}
+}
+
 \end{document}

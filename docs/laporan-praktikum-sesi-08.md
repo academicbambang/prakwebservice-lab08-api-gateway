@@ -12,7 +12,7 @@ Repository: [prakwebservice-lab08-api-gateway](https://github.com/academicbamban
 
 Praktikum ini membuat satu pintu masuk untuk dua service demo, membuktikan routing berdasarkan path, dan membatasi request pada gateway. Implementasi menggunakan Node.js, Express, `http-proxy-middleware`, dan `express-rate-limit` sesuai Opsi A Lab 08. Tantangan API key juga diterapkan pada jalur pesanan.
 
-Catalog Service dan Order Service digunakan sebagai konteks demo individu. Pekerjaan ini merupakan tugas praktikum gateway, bukan implementasi lengkap marketplace UAS. Materi Web Service sesi 8 dibaca sebagai acuan keamanan API key; materi Software Testing sesi 8 menjadi acuan pengujian batas dan skenario negatif. Tugas rancangan keamanan UAS serta tugas Java/JUnit tersendiri tidak termasuk hasil praktikum ini.
+Implementasi Lab 08 merupakan bagian dari rancangan Marketplace UMKM Kelompok D, dengan fokus pada API Gateway, Catalog Service, dan Order Service. Pekerjaan ini merupakan tugas praktikum individu dan belum mencakup implementasi lengkap marketplace UAS. Materi Web Service sesi 8 dibaca sebagai acuan keamanan API key; materi Software Testing sesi 8 menjadi acuan pengujian batas dan skenario negatif. Tugas rancangan keamanan UAS serta tugas Java/JUnit tersendiri tidak termasuk hasil praktikum ini.
 
 ## 2. Arsitektur
 
@@ -45,7 +45,7 @@ URL `/orders/orders` disengaja: `/orders` pertama adalah namespace gateway untuk
 
 Repository memakai npm workspaces untuk `gateway`, `catalog-service`, dan `order-service`. Setup membuat API key acak lokal dalam `gateway/.env`, sedangkan skrip start menjalankan ketiga proses secara lintas sistem operasi. Gateway juga dapat dijalankan langsung melalui `node gateway/gateway.js` dari root atau `node gateway.js` dari folder `gateway` setelah kedua service aktif. Pada stack, `PORT` mengatur port gateway, sedangkan `CATALOG_PORT` dan `ORDER_PORT` mengatur port masing-masing backend agar variabel `PORT` global tidak menyebabkan konflik.
 
-Gateway membaca `PORT`, `HOST`, `CATALOG_SERVICE_URL`, `ORDER_SERVICE_URL`, `API_KEY`, dan `TRUST_PROXY` dari konfigurasi. Default lokal adalah host `127.0.0.1`, port `8080`, dan `TRUST_PROXY=0`. Pada Render, gateway memakai `HOST=0.0.0.0`, port dari platform, dan `TRUST_PROXY=1`; kedua backend tetap loopback. Hasil deployment publik dicatat pada bagian 9. Screenshot Postman pada bagian 5 memakai URL publik Render, sedangkan screenshot rate limit memakai stack lokal.
+Gateway membaca `PORT`, `HOST`, `CATALOG_SERVICE_URL`, `ORDER_SERVICE_URL`, `API_KEY`, dan `TRUST_PROXY` dari konfigurasi. Default lokal adalah host `127.0.0.1`, port `8080`, dan `TRUST_PROXY=0`. Pada Render, gateway memakai `HOST=0.0.0.0`, port dari platform, dan `TRUST_PROXY=1`; kedua backend tetap loopback. Hasil deployment publik dicatat pada bagian 9. Bukti pada bagian 5 disusun dari pengujian lokal, deployment, lalu pengujian Render.
 
 Rate limit dipasang sebelum routing API sehingga setiap IP mendapat paling banyak 20 request selama 10 detik. Request berikutnya memperoleh `429 Too Many Requests`. Endpoint `/health` dan request yang ditolak juga menghabiskan kuota; pengujian batas harus dimulai dengan window yang bersih. Endpoint readiness `/readyz` dikecualikan agar pemeriksaan platform tidak memakai kuota API. Penyimpanan penghitung lokal berada dalam memori satu proses.
 
@@ -67,7 +67,7 @@ npm start
 
 Import collection dan environment dalam `docs/postman`. Pilih environment lokal dan isi `apiKey` dengan nilai lokal dari `gateway/.env`. Jalankan katalog terlebih dahulu untuk memperoleh ID produk yang digunakan pada pembuatan pesanan. Request katalog dan pesanan sama-sama harus menampilkan basis URL gateway dengan port `8080`.
 
-Untuk mengulangi screenshot pada bagian 5, import `render.postman_environment.json`, pilih **Lab 08 Render**, lalu isi `apiKey` dari nilai `API_KEY` dalam `gateway/.env.render`. Kedua service diakses melalui satu basis URL `https://prakwebservice-lab08-api-gateway.onrender.com` (HTTPS, port standar `443`); tidak perlu menjalankan stack lokal untuk request publik ini.
+Untuk mengulangi screenshot Render pada bagian 5, import `render.postman_environment.json`, pilih **Lab 08 Render**, lalu isi `apiKey` dari nilai `API_KEY` dalam `gateway/.env.render`. Kedua service diakses melalui satu basis URL `https://prakwebservice-lab08-api-gateway.onrender.com` (HTTPS, port standar `443`); tidak perlu menjalankan stack lokal untuk request publik ini.
 
 Untuk pengujian lokal, collection dijalankan manual melalui Postman ketika stack `npm start` aktif. Bila server hanya dikonfigurasi dengan `API_KEY_SHA256`, isi variabel Postman `apiKey` menggunakan key asli milik klien, bukan digest yang disimpan server. Pengujian alur otomatis menggunakan gateway dan service nyata termasuk dalam `npm test`.
 
@@ -102,43 +102,64 @@ npm run test:rate-limit
 
 Perintah menyiapkan stack baru lalu mengirim 30 request berurutan ke endpoint katalog yang valid. Target bukti adalah 20 status `200` diikuti 10 status `429`. Untuk menguji server yang sudah aktif, gunakan `node gateway/test-rate-limit.js` setelah menunggu setidaknya 10 detik tanpa request dari IP yang sama. Pisahkan demonstrasi ini dari request Postman agar kuota awal tidak terpakai.
 
+Pengujian khusus Render dijalankan melalui `npm run test:rate-limit:render`. Skrip menunggu pemulihan kuota, mengirim 30 request berurutan melalui satu sesi HTTP/2, lalu memeriksa pola 20 respons `200` dan 10 respons `429` beserta penghitung kuotanya dalam durasi kurang dari 10 detik. Hasil yang lulus disimpan dalam `evidence/render/rate-limit.txt` dan `.json`. Screenshot terminal hasil Render masih perlu diambil pengguna.
+
 ## 5. Bukti pengumpulan dan status verifikasi
 
-Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Lima screenshot manual dari pengguna pada 21 Oktober 2026 dipakai sebagai bukti visual terbaru. Screenshot Postman menunjukkan kedua service diakses melalui URL HTTPS Render yang sama, dan akses pesanan tanpa key ditolak `401`. Demonstrasi rate limiting lokal menghasilkan 20 respons `200` diikuti 10 respons `429`.
+Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Delapan screenshot tersedia: tiga screenshot Postman lokal awal yang dipulihkan dari Git dan lima screenshot manual pengguna pada 21 Oktober 2026. Bukti disusun dari empat pengujian lokal, deployment, lalu empat pengujian Render. Bukti kesembilan, rate limit Render, sudah memiliki log berhasil tetapi belum memiliki screenshot terminal.
 
-| Pemeriksaan | Metode / endpoint | Hasil aktual | Bukti |
+| No. | Pemeriksaan | Hasil aktual | Bukti |
 | --- | --- | --- | --- |
-| Katalog melalui gateway | Postman: `GET /catalog/products` pada URL HTTPS Render | `200`, `service: catalog-service`, daftar produk | [Screenshot katalog](evidence/postman-catalog.png) |
-| Pesanan melalui gateway | Postman: `GET /orders/orders` pada URL HTTPS Render, key benar | `200`, `service: order-service`, `data: []`, tes 3/3; key asli tidak ditampilkan | [Screenshot pesanan](evidence/postman-orders.png) |
-| Penolakan akses tanpa key | Postman: request pesanan pada Render tanpa `X-API-Key` | `401 Unauthorized`, tes 3/3 | [Screenshot negatif](evidence/postman-unauthorized.png) |
-| Batas request lokal | Terminal VS Code: `npm run test:rate-limit`, 30 request pada stack baru | Request 1-20 `200`, request 21-30 `429`; **LULUS** | [Screenshot terminal](evidence/rate-limit.png) |
-| Unit, integrasi, dan alur menyeluruh | `npm test` menggunakan `node:test` | Awal 35/35; setelah pemeriksaan deployment 40/40 | [Log awal](evidence/tests.txt), [log deployment](evidence/tests-deployment.txt) |
-| Deployment publik | Dashboard Render, commit `3999fbb` | **Live**, deployment terbaru berhasil | [Screenshot Render](evidence/render-dashboard.png) |
+| 1 | Katalog lokal melalui gateway: `GET /catalog/products?search=kopi` | `200`, data Catalog Service | [Screenshot lokal katalog](evidence/local/postman-catalog.png) |
+| 2 | Pesanan lokal: `GET /orders/orders`, key benar | `200`, data Order Service | [Screenshot lokal pesanan](evidence/local/postman-orders.png) |
+| 3 | Pesanan lokal tanpa `X-API-Key` | `401 Unauthorized` | [Screenshot lokal tanpa key](evidence/local/postman-unauthorized.png) |
+| 4 | Rate limit lokal: `npm run test:rate-limit` | Request 1-20 `200`, request 21-30 `429`; **LULUS** | [Screenshot terminal lokal](evidence/rate-limit.png) |
+| 5 | Deployment Render, commit `3999fbb` | **Live**, deployment terbaru berhasil | [Screenshot Render](evidence/render-dashboard.png) |
+| 6 | Katalog Render: `GET /catalog/products` | `200`, `service: catalog-service`, daftar produk | [Screenshot Render katalog](evidence/postman-catalog.png) |
+| 7 | Pesanan Render: `GET /orders/orders`, key benar | `200`, `service: order-service`, `data: []`, tes 3/3 | [Screenshot Render pesanan](evidence/postman-orders.png) |
+| 8 | Pesanan Render tanpa `X-API-Key` | `401 Unauthorized`, tes 3/3 | [Screenshot Render tanpa key](evidence/postman-unauthorized.png) |
+| 9 | Rate limit Render: `npm run test:rate-limit:render` | 20 respons `200`, lalu 10 respons `429`; **LULUS** | [Log](evidence/render/rate-limit.txt), [JSON](evidence/render/rate-limit.json); **screenshot terminal belum tersedia** |
 
-Screenshot rate limiting merupakan tangkapan terminal langsung ketika pengguna menjalankan pengujian lokal. [Log rate limit](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal lima screenshot dicatat dalam [daftar bukti manual](evidence/README.md).
+Screenshot lokal menggunakan `http://127.0.0.1:8080`; ketiga screenshot Postman Render menggunakan satu basis URL HTTPS Render yang sama. Nilai key asli tidak ditampilkan. Ketiga screenshot Postman lokal dipulihkan tanpa perubahan dari commit `3999fbb`. Screenshot rate limiting lokal merupakan tangkapan terminal langsung pengguna. [Log rate limit lokal](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal seluruh gambar dicatat dalam [daftar bukti](evidence/README.md). Log berhasil untuk bukti nomor 9 dicatat sebagai log, tanpa menggantikan screenshot yang masih perlu diambil.
 
 <details>
 <summary>Lihat tangkapan layar bukti</summary>
 
-**Katalog melalui gateway - 200**
+**1. Katalog lokal - 200**
 
-![Postman katalog melalui gateway, status 200](evidence/postman-catalog.png)
+![Postman katalog melalui gateway lokal, status 200](evidence/local/postman-catalog.png)
 
-**Pesanan melalui gateway - 200**
+**2. Pesanan lokal - 200**
 
-![Postman pesanan melalui gateway, status 200](evidence/postman-orders.png)
+![Postman pesanan melalui gateway lokal, status 200](evidence/local/postman-orders.png)
 
-**Pesanan tanpa API key - 401**
+**3. Pesanan lokal tanpa API key - 401**
 
-![Postman pesanan tanpa API key, status 401](evidence/postman-unauthorized.png)
+![Postman pesanan lokal tanpa API key, status 401](evidence/local/postman-unauthorized.png)
 
-**Rate limit - 20 respons 200, lalu 10 respons 429**
+**4. Rate limit lokal - 20 respons 200, lalu 10 respons 429**
 
 ![Terminal VS Code menampilkan pengujian rate limit lokal yang lulus](evidence/rate-limit.png)
 
-**Deployment Render - Live**
+**5. Deployment Render - Live**
 
 ![Dashboard Render menampilkan commit 3999fbb berstatus Live](evidence/render-dashboard.png)
+
+**6. Katalog Render - 200**
+
+![Postman katalog melalui gateway Render, status 200](evidence/postman-catalog.png)
+
+**7. Pesanan Render - 200**
+
+![Postman pesanan melalui gateway Render, status 200](evidence/postman-orders.png)
+
+**8. Pesanan Render tanpa API key - 401**
+
+![Postman pesanan Render tanpa API key, status 401](evidence/postman-unauthorized.png)
+
+**9. Rate limit Render - log lulus; screenshot belum tersedia**
+
+[Log pengujian Render](evidence/render/rate-limit.txt) dan [data JSON](evidence/render/rate-limit.json) menyimpan 30 respons aktual. Screenshot terminal hasil ini belum tersedia.
 
 </details>
 

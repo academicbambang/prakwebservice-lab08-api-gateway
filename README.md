@@ -4,6 +4,8 @@
 
 Demo individu API Gateway menggunakan Node.js dan Express. Satu alamat gateway meneruskan request ke Catalog Service dan Order Service, membatasi request menjadi 20 per 10 detik per IP, serta memeriksa API key pada akses pesanan. Repository tugas praktikum sesi 8 ini dapat dijalankan lokal dan sudah di-deploy ke Render.
 
+Implementasi Lab 08 merupakan bagian dari rancangan Marketplace UMKM Kelompok D, dengan fokus pada API Gateway, Catalog Service, dan Order Service.
+
 **Demo publik Render:** [halaman utama gateway](https://prakwebservice-lab08-api-gateway.onrender.com/), [lihat katalog](https://prakwebservice-lab08-api-gateway.onrender.com/catalog/products), atau [periksa readiness](https://prakwebservice-lab08-api-gateway.onrender.com/readyz). Halaman utama menampilkan ringkasan layanan, tautan endpoint, dan status kesiapan kedua service yang diperiksa saat halaman dibuka. Deployment berjalan pada instance Free dan telah diverifikasi, termasuk API key, GraphQL, pembuatan pesanan, serta 20 respons `200` diikuti 10 respons `429`.
 
 ## Menjalankan
@@ -126,23 +128,32 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 
 ## Berkas pengumpulan
 
-- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): 9 halaman A4 (satu cover dan delapan halaman isi), mencakup diagram, hasil pengujian, lima screenshot manual, refleksi, dan deployment publik.
+- [Laporan PDF](output/pdf/laporan-praktikum-sesi-08.pdf): cover, diagram, hasil pengujian lokal, deployment, pengujian Render, dan refleksi. Delapan screenshot disusun mengikuti urutan bukti di bawah; rate limit Render sudah memiliki log berhasil, tetapi screenshot terminalnya belum tersedia.
 - [Sumber LaTeX](docs/latex/main.tex) dan [petunjuk kompilasi](docs/latex/README.md): proyek lengkap dengan gambar di dalam folder `docs/latex`.
 - [Unduh proyek LaTeX lengkap (ZIP)](output/latex/laporan-praktikum-sesi-08-latex.zip): siap diunggah ke Overleaf.
 - [Laporan praktikum](docs/laporan-praktikum-sesi-08.md): implementasi, diagram, prosedur pengujian, dan refleksi.
 - Diagram arsitektur: [PNG](docs/arsitektur.png) dan [SVG](docs/arsitektur.svg).
 - `gateway/gateway.js` dan `gateway/package.json`: kode serta dependensi gateway.
 - `docs/postman`: collection dan environment untuk mengulangi pemeriksaan.
-- [Screenshot Postman katalog](docs/evidence/postman-catalog.png): request `GET /catalog/products` melalui URL HTTPS Render menghasilkan `200`.
-- [Screenshot Postman pesanan](docs/evidence/postman-orders.png): request `GET /orders/orders` melalui URL HTTPS Render yang sama menghasilkan `200` dengan key benar; nilai key asli tidak ditampilkan.
-- [Screenshot Postman tanpa key](docs/evidence/postman-unauthorized.png): request pesanan pada URL HTTPS Render ditolak `401`, dengan 3/3 tes Postman lulus.
 - [Log pengujian otomatis](docs/evidence/tests.txt): 35 dari 35 test lulus.
 - [Transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json): hasil eksekusi aktual 20 status `200` diikuti 10 status `429`.
-- [Screenshot rate limit](docs/evidence/rate-limit.png): tangkapan langsung terminal VS Code saat menjalankan `npm run test:rate-limit` pada stack lokal; 20 respons `200`, lalu 10 respons `429`, dan **LULUS**.
-- [Screenshot Render](docs/evidence/render-dashboard.png): deployment terbaru commit `3999fbb` berstatus **Live**.
-- [Asal screenshot manual](docs/evidence/README.md): lima tangkapan layar pengguna pada 21 Oktober 2026.
+- [Asal screenshot](docs/evidence/README.md): tiga screenshot Postman lokal awal yang dipulihkan dari Git dan lima tangkapan layar manual pengguna pada 21 Oktober 2026.
 
-Screenshot Postman memakai satu basis URL `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar `data: []` pada screenshot pesanan berarti belum ada pesanan yang tersimpan saat tangkapan diambil; pengujian pembuatan pesanan tercakup dalam suite otomatis. Screenshot rate limit lokal, log eksekusi terdahulu, dan log verifikasi publik merupakan bukti terpisah.
+Urutan bukti dalam laporan mengikuti alur lokal, deployment, lalu Render:
+
+| No. | Bukti | Status |
+| --- | --- | --- |
+| 1 | [Katalog lokal](docs/evidence/local/postman-catalog.png) | Screenshot `200` |
+| 2 | [Pesanan lokal dengan key](docs/evidence/local/postman-orders.png) | Screenshot `200` |
+| 3 | [Pesanan lokal tanpa key](docs/evidence/local/postman-unauthorized.png) | Screenshot `401` |
+| 4 | [Rate limit lokal](docs/evidence/rate-limit.png) | Screenshot terminal: 20 respons `200`, lalu 10 respons `429`; **LULUS** |
+| 5 | [Deployment Render](docs/evidence/render-dashboard.png) | Screenshot commit `3999fbb`, **Live** |
+| 6 | [Katalog Render](docs/evidence/postman-catalog.png) | Screenshot `200` |
+| 7 | [Pesanan Render dengan key](docs/evidence/postman-orders.png) | Screenshot `200` |
+| 8 | [Pesanan Render tanpa key](docs/evidence/postman-unauthorized.png) | Screenshot `401` |
+| 9 | Rate limit Render | [Log terminal](docs/evidence/render/rate-limit.txt) dan [JSON](docs/evidence/render/rate-limit.json) lulus; **screenshot terminal belum tersedia** |
+
+Screenshot Postman lokal memakai `http://127.0.0.1:8080`, sedangkan screenshot Render memakai `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar `data: []` pada screenshot pesanan berarti belum ada pesanan yang tersimpan saat tangkapan diambil; pengujian pembuatan pesanan tercakup dalam suite otomatis. Screenshot rate limit lokal, log eksekusi terdahulu, dan log verifikasi publik merupakan bukti terpisah. Bukti nomor 9 sudah dicatat sebagai hasil eksekusi, tanpa menggantikan screenshot yang masih perlu diambil.
 
 ## Deployment ke Render
 
