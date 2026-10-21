@@ -1,5 +1,7 @@
 # Laporan Praktikum Web Service Sesi 08
 
+Versi pengumpulan: [PDF](../output/pdf/laporan-praktikum-sesi-08.pdf). Sumber dan gambar tersedia dalam [proyek LaTeX](latex/README.md).
+
 **API Gateway Sederhana dengan Node.js dan Express**<br>
 Nama: **Bambang Herlambang**<br>
 NIM: **5803024019**<br>
