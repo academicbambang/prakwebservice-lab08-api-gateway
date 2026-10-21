@@ -1,0 +1,31 @@
+# Demo lab: three Node processes in one Free instance; only the gateway is public.
+# Catalog and Order remain on loopback, so clients cannot bypass the gateway key.
+services:
+  - type: web
+    name: prakwebservice-lab08-api-gateway
+    runtime: node
+    plan: free
+    region: singapore
+    repo: https://github.com/academicbambang/prakwebservice-lab08-api-gateway
+    branch: main
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /readyz
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "1"
+      - key: CATALOG_SERVICE_URL
+        value: http://127.0.0.1:3000
+      - key: ORDER_SERVICE_URL
+        value: http://127.0.0.1:3001
+      # Run npm run setup:render locally. Paste only the digest into Render.
+      # The original client key stays in gateway/.env.render (gitignored).
+      - key: API_KEY_SHA256
+        sync: false

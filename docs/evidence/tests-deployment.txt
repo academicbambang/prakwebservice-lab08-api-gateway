@@ -1,0 +1,260 @@
+
+> prakwebservice-lab08-api-gateway@0.1.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: Render readiness succeeds only when both upstream health checks succeed
+ok 1 - Render readiness succeeds only when both upstream health checks succeed
+  ---
+  duration_ms: 110.7563
+  type: 'test'
+  ...
+# Subtest: Render readiness returns 503 when either upstream reports an error
+ok 2 - Render readiness returns 503 when either upstream reports an error
+  ---
+  duration_ms: 45.7129
+  type: 'test'
+  ...
+# Subtest: Render readiness stops waiting for an unresponsive upstream
+ok 3 - Render readiness stops waiting for an unresponsive upstream
+  ---
+  duration_ms: 1019.9094
+  type: 'test'
+  ...
+# (node:2980) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: readiness probes neither use nor depend on the API rate-limit quota
+ok 4 - readiness probes neither use nor depend on the API rate-limit quota
+  ---
+  duration_ms: 163.5669
+  type: 'test'
+  ...
+# Subtest: stack exposes only the gateway host and connects backends through their configured loopback ports
+ok 5 - stack exposes only the gateway host and connects backends through their configured loopback ports
+  ---
+  duration_ms: 0.5623
+  type: 'test'
+  ...
+# (node:19044) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real catalog, order, and gateway complete the product-to-order flow
+ok 6 - real catalog, order, and gateway complete the product-to-order flow
+  ---
+  duration_ms: 208.4671
+  type: 'test'
+  ...
+# (node:8840) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: routing katalog menghapus prefix dan mempertahankan query string
+ok 7 - routing katalog menghapus prefix dan mempertahankan query string
+  ---
+  duration_ms: 115.3137
+  type: 'test'
+  ...
+# Subtest: POST JSON diteruskan utuh ke service pesanan dan key tidak diteruskan
+ok 8 - POST JSON diteruskan utuh ke service pesanan dan key tidak diteruskan
+  ---
+  duration_ms: 42.2079
+  type: 'test'
+  ...
+# Subtest: API key tidak ada ditolak
+ok 9 - API key tidak ada ditolak
+  ---
+  duration_ms: 15.3131
+  type: 'test'
+  ...
+# Subtest: API key kosong ditolak
+ok 10 - API key kosong ditolak
+  ---
+  duration_ms: 12.5013
+  type: 'test'
+  ...
+# Subtest: API key salah ditolak
+ok 11 - API key salah ditolak
+  ---
+  duration_ms: 13.0106
+  type: 'test'
+  ...
+# Subtest: konfigurasi tanpa key menolak akses pesanan
+ok 12 - konfigurasi tanpa key menolak akses pesanan
+  ---
+  duration_ms: 14.1769
+  type: 'test'
+  ...
+# Subtest: hash API key yang valid menerima key asal
+ok 13 - hash API key yang valid menerima key asal
+  ---
+  duration_ms: 21.967
+  type: 'test'
+  ...
+# Subtest: route /missing tidak cocok dengan prefix service
+ok 14 - route /missing tidak cocok dengan prefix service
+  ---
+  duration_ms: 16.2029
+  type: 'test'
+  ...
+# Subtest: route /catalogue/products tidak cocok dengan prefix service
+ok 15 - route /catalogue/products tidak cocok dengan prefix service
+  ---
+  duration_ms: 12.3725
+  type: 'test'
+  ...
+# Subtest: route /orders-other/orders tidak cocok dengan prefix service
+ok 16 - route /orders-other/orders tidak cocok dengan prefix service
+  ---
+  duration_ms: 11.5803
+  type: 'test'
+  ...
+# Subtest: batas default tepat 20 request; request ke-21 hingga ke-30 mendapat 429
+ok 17 - batas default tepat 20 request; request ke-21 hingga ke-30 mendapat 429
+  ---
+  duration_ms: 153.1665
+  type: 'test'
+  ...
+# Subtest: kuota dipulihkan setelah window berakhir
+ok 18 - kuota dipulihkan setelah window berakhir
+  ---
+  duration_ms: 2132.1144
+  type: 'test'
+  ...
+# Subtest: upstream mati menghasilkan 502 JSON tanpa menggantung
+ok 19 - upstream mati menghasilkan 502 JSON tanpa menggantung
+  ---
+  duration_ms: 12.4977
+  type: 'test'
+  ...
+# Subtest: konfigurasi menolak hash, port dan URL upstream tidak valid
+ok 20 - konfigurasi menolak hash, port dan URL upstream tidak valid
+  ---
+  duration_ms: 1.5702
+  type: 'test'
+  ...
+# Subtest: BVA: quantity accepts the inclusive limits 1 and 100
+ok 21 - BVA: quantity accepts the inclusive limits 1 and 100
+  ---
+  duration_ms: 1.7825
+  type: 'test'
+  ...
+# Subtest: BVA/EP: quantity rejects outside limits, fractions, and invalid types
+ok 22 - BVA/EP: quantity rejects outside limits, fractions, and invalid types
+  ---
+  duration_ms: 0.845
+  type: 'test'
+  ...
+# Subtest: BVA: customerName requires 1 to 100 characters after trimming
+ok 23 - BVA: customerName requires 1 to 100 characters after trimming
+  ---
+  duration_ms: 0.5025
+  type: 'test'
+  ...
+# Subtest: BVA: items accepts 1 and 50 entries and rejects 0 or 51
+ok 24 - BVA: items accepts 1 and 50 entries and rejects 0 or 51
+  ---
+  duration_ms: 0.3093
+  type: 'test'
+  ...
+# Subtest: EP: invalid bodies and product identifiers are rejected
+ok 25 - EP: invalid bodies and product identifiers are rejected
+  ---
+  duration_ms: 0.3763
+  type: 'test'
+  ...
+# Subtest: prices and totals come from catalog values; client price fields are ignored
+ok 26 - prices and totals come from catalog values; client price fields are ignored
+  ---
+  duration_ms: 1.1928
+  type: 'test'
+  ...
+# Subtest: stock checks count repeated products together
+ok 27 - stock checks count repeated products together
+  ---
+  duration_ms: 0.4895
+  type: 'test'
+  ...
+# Subtest: malformed upstream prices are rejected instead of being used in totals
+ok 28 - malformed upstream prices are rejected instead of being used in totals
+  ---
+  duration_ms: 0.2943
+  type: 'test'
+  ...
+# Subtest: catalog REST exposes products, case-insensitive filters, and JSON errors
+ok 29 - catalog REST exposes products, case-insensitive filters, and JSON errors
+  ---
+  duration_ms: 124.705
+  type: 'test'
+  ...
+# Subtest: GraphQL POST selects requested fields and supports variables
+ok 30 - GraphQL POST selects requested fields and supports variables
+  ---
+  duration_ms: 58.5031
+  type: 'test'
+  ...
+# Subtest: GraphQL GET returns one product and null for an unknown ID
+ok 31 - GraphQL GET returns one product and null for an unknown ID
+  ---
+  duration_ms: 11.1687
+  type: 'test'
+  ...
+# Subtest: GraphQL reports invalid field selection using standard GraphQL errors
+ok 32 - GraphQL reports invalid field selection using standard GraphQL errors
+  ---
+  duration_ms: 10.9975
+  type: 'test'
+  ...
+# Subtest: order REST creates an authoritative total, Location, detail, and list
+ok 33 - order REST creates an authoritative total, Location, detail, and list
+  ---
+  duration_ms: 18.6815
+  type: 'test'
+  ...
+# Subtest: each order app has independent in-memory state
+ok 34 - each order app has independent in-memory state
+  ---
+  duration_ms: 16.9194
+  type: 'test'
+  ...
+# Subtest: invalid orders, unknown products, and insufficient stock return 400 and create no orders
+ok 35 - invalid orders, unknown products, and insufficient stock return 400 and create no orders
+  ---
+  duration_ms: 19.9448
+  type: 'test'
+  ...
+# Subtest: upstream network failure returns 502 and keeps the order list empty
+ok 36 - upstream network failure returns 502 and keeps the order list empty
+  ---
+  duration_ms: 16.9335
+  type: 'test'
+  ...
+# Subtest: upstream HTTP error and invalid product data return 502
+ok 37 - upstream HTTP error and invalid product data return 502
+  ---
+  duration_ms: 16.2003
+  type: 'test'
+  ...
+# Subtest: order service calls the configured catalog URL with an abort signal
+ok 38 - order service calls the configured catalog URL with an abort signal
+  ---
+  duration_ms: 7.7753
+  type: 'test'
+  ...
+# Subtest: unknown order and unknown routes return JSON 404
+ok 39 - unknown order and unknown routes return JSON 404
+  ---
+  duration_ms: 8.2218
+  type: 'test'
+  ...
+# Subtest: both services reject malformed JSON with a JSON 400 response
+ok 40 - both services reject malformed JSON with a JSON 400 response
+  ---
+  duration_ms: 13.2977
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3096.1515

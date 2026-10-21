@@ -23,6 +23,28 @@ function createGateway(config = {}) {
   // Direct localhost clients must not be able to spoof X-Forwarded-For.
   // Use TRUST_PROXY=1 only behind a platform with exactly one trusted hop.
   app.set('trust proxy', trustProxy);
+
+  // Render probes readiness independently of the caller's API request quota.
+  app.get('/readyz', async (_req, res) => {
+    const checks = await Promise.all([catalogUrl, orderUrl].map(async (url) => {
+      try {
+        const response = await fetch(new URL('/health', url), {
+          signal: AbortSignal.timeout(1000),
+          redirect: 'error',
+        });
+        await response.body?.cancel();
+        return response.ok;
+      } catch {
+        return false;
+      }
+    }));
+    const healthy = checks.every(Boolean);
+    res.set('Cache-Control', 'no-store').status(healthy ? 200 : 503).json({
+      status: healthy ? 'ok' : 'unavailable',
+      service: 'gateway',
+    });
+  });
+
   const store = new MemoryStore();
   const limiter = rateLimit({
     store,

@@ -92,7 +92,7 @@ Saat menjalankan stack, `PORT` digunakan oleh gateway. Port backend memakai vari
 
 API key dibandingkan melalui hash di memori. Bila memakai `API_KEY_SHA256`, klien tetap mengirim key asli pada header `X-API-Key`; masukkan digest ke konfigurasi server dan hapus `API_KEY` agar hanya satu konfigurasi digunakan. API key ini mengidentifikasi pemanggil demo, belum merupakan sistem autentikasi pengguna atau pengelolaan key dengan rotasi dan pencabutan.
 
-Rate limit berlaku untuk semua endpoint gateway, termasuk health check, request yang ditolak, dan route tidak dikenal. Semua request dari IP yang sama berbagi kuota. Penyimpanan hit berada dalam memori satu proses dan direset saat gateway dimulai ulang; deployment beberapa instance membutuhkan shared store.
+Rate limit berlaku untuk endpoint API gateway, termasuk `/health`, request yang ditolak, dan route tidak dikenal. Endpoint kesiapan `/readyz` dikecualikan agar pemeriksaan platform tidak memakai kuota pengguna. Semua request API dari IP yang sama berbagi kuota. Penyimpanan hit berada dalam memori satu proses dan direset saat gateway dimulai ulang; deployment beberapa instance membutuhkan shared store.
 
 ## Pengujian
 
@@ -100,7 +100,7 @@ Rate limit berlaku untuk semua endpoint gateway, termasuk health check, request 
 npm test
 ```
 
-Suite memakai `node:test` untuk pengujian unit, integrasi, dan alur HTTP dengan gateway serta service nyata. Skenario mencakup routing dan penghapusan prefix, penerusan query/body, pemeriksaan API key, batas rate limit, input negatif, serta kegagalan upstream. Data uji mencakup batas dan jalur negatif sesuai prinsip BVA dan assertion bermakna dari materi Software Testing. **Hasil aktual: 35 dari 35 test lulus, tanpa kegagalan**, sesuai [log `npm test`](docs/evidence/tests.txt).
+Suite memakai `node:test` untuk pengujian unit, integrasi, dan alur HTTP dengan gateway serta service nyata. Skenario mencakup routing dan penghapusan prefix, penerusan query/body, pemeriksaan API key, batas rate limit, input negatif, serta kegagalan upstream. Data uji mencakup batas dan jalur negatif sesuai prinsip BVA dan assertion bermakna dari materi Software Testing. **Hasil terbaru: 40 dari 40 test lulus**, termasuk lima pemeriksaan deployment, sesuai [log persiapan Render](docs/evidence/tests-deployment.txt). [Log awal 35/35](docs/evidence/tests.txt) tetap tersedia sebagai sumber bukti laporan lokal.
 
 Untuk demonstrasi 30 request, **hentikan stack `npm start` terlebih dahulu**, lalu jalankan:
 
@@ -131,6 +131,10 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 - [Screenshot rate limit](docs/evidence/rate-limit.png): screenshot [halaman transkrip](docs/evidence/rate-limit.html) yang bersumber dari `rate-limit.txt`, bukan tangkapan terminal langsung.
 
 Seluruh bukti di atas berasal dari eksekusi aktual dan tersedia dalam repository. Screenshot pesanan menampilkan daftar kosong dari proses demo yang baru dijalankan; pengujian pembuatan pesanan tercakup dalam suite otomatis.
+
+## Deployment ke Render
+
+Blueprint tersedia pada [`render.yaml`](render.yaml), dengan [panduan deployment dan verifikasi](docs/deployment-render.md). Untuk demo, satu instance Free menjalankan tiga proses; hanya gateway dipublikasikan, sedangkan Catalog dan Order tetap pada loopback. Jalankan `npm run setup:render` untuk membuat key deployment terpisah dalam file yang diabaikan Git. Konfigurasi siap deploy tidak dianggap sebagai bukti aplikasi sudah live; URL publik dicatat setelah deployment terverifikasi.
 
 ## Catatan audit dependensi
 
