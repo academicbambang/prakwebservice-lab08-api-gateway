@@ -106,11 +106,11 @@ Pengujian khusus Render dijalankan melalui `npm run test:rate-limit:render`. Skr
 
 ## 5. Bukti pengumpulan dan status verifikasi
 
-Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Sembilan screenshot tersedia: tiga screenshot Postman lokal awal yang dipulihkan dari Git dan enam screenshot manual pengguna pada 21 Oktober 2026. Bukti disusun dari empat pengujian lokal, deployment, lalu empat pengujian Render.
+Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log pengujian awal](evidence/tests.txt). Suite setelah penambahan pemeriksaan deployment lulus **40/40** sesuai [log deployment](evidence/tests-deployment.txt). Sembilan screenshot merupakan tangkapan manual pengguna pada 21 Oktober 2026, termasuk tiga screenshot Postman lokal terbaru. Bukti disusun dari empat pengujian lokal, deployment, lalu empat pengujian Render.
 
 | No. | Pemeriksaan | Hasil aktual | Bukti |
 | --- | --- | --- | --- |
-| 1 | Katalog lokal melalui gateway: `GET /catalog/products?search=kopi` | `200`, data Catalog Service | [Screenshot lokal katalog](evidence/local/postman-catalog.png) |
+| 1 | Katalog lokal melalui gateway: `GET /catalog/products` | `200`, daftar produk Catalog Service tanpa filter | [Screenshot lokal katalog](evidence/local/postman-catalog.png) |
 | 2 | Pesanan lokal: `GET /orders/orders`, key benar | `200`, data Order Service | [Screenshot lokal pesanan](evidence/local/postman-orders.png) |
 | 3 | Pesanan lokal tanpa `X-API-Key` | `401 Unauthorized` | [Screenshot lokal tanpa key](evidence/local/postman-unauthorized.png) |
 | 4 | Rate limit lokal: `npm run test:rate-limit` | Request 1-20 `200`, request 21-30 `429`; **LULUS** | [Screenshot terminal lokal](evidence/rate-limit.png) |
@@ -120,7 +120,7 @@ Eksekusi awal `npm test` lulus **35 dari 35 test**, tanpa kegagalan, sesuai [log
 | 8 | Pesanan Render tanpa `X-API-Key` | `401 Unauthorized`, tes 3/3 | [Screenshot Render tanpa key](evidence/postman-unauthorized.png) |
 | 9 | Rate limit Render: `npm run test:rate-limit:render` | 20 respons `200`, lalu 10 respons `429`; **LULUS**, durasi 1681 ms | [Screenshot terminal Render](evidence/render/rate-limit.png), [log](evidence/render/rate-limit.txt), [JSON](evidence/render/rate-limit.json) |
 
-Screenshot lokal menggunakan `http://127.0.0.1:8080`; ketiga screenshot Postman Render menggunakan satu basis URL HTTPS Render yang sama. Nilai key asli tidak ditampilkan. Ketiga screenshot Postman lokal dipulihkan tanpa perubahan dari commit `3999fbb`. Screenshot rate limiting lokal dan Render merupakan tangkapan terminal langsung pengguna. [Log rate limit lokal](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Screenshot rate limit Render cocok dengan log dan JSON dari eksekusi yang dimulai `2026-10-21T11:43:50.592Z` dan selesai dalam 1681 ms. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal seluruh gambar dicatat dalam [daftar bukti](evidence/README.md).
+Screenshot lokal memperlihatkan environment **Lab 08 Local** dan popup basis URL `http://127.0.0.1:8080`; ketiga screenshot Postman Render menggunakan satu basis URL HTTPS Render yang sama. Nilai key asli tidak ditampilkan. Ketiga screenshot Postman lokal terbaru menggantikan gambar awal yang pernah dipulihkan dari commit `3999fbb`; gambar lama tetap tersedia melalui riwayat Git. Screenshot rate limiting lokal dan Render merupakan tangkapan terminal langsung pengguna. [Log rate limit lokal](evidence/rate-limit.txt), [JSON status](evidence/rate-limit.json), dan [halaman transkrip](evidence/rate-limit.html) adalah arsip eksekusi terdahulu yang terpisah, dengan pola hasil yang sama. Screenshot rate limit Render cocok dengan log dan JSON dari eksekusi yang dimulai `2026-10-21T11:43:50.592Z` dan selesai dalam 1681 ms. Daftar `data: []` pada screenshot pesanan menunjukkan belum ada pesanan tersimpan saat tangkapan diambil; pembuatan pesanan dengan perhitungan harga katalog diuji dalam suite otomatis. Asal seluruh gambar dicatat dalam [daftar bukti](evidence/README.md).
 
 <details>
 <summary>Lihat tangkapan layar bukti</summary>

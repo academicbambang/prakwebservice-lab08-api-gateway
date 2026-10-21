@@ -41,7 +41,9 @@ Sembilan screenshot dimasukkan dengan urutan berikut:
 8. Pesanan Render tanpa key `401`: `images/postman-unauthorized.png`.
 9. Rate limit Render, 20 respons `200` lalu 10 respons `429` dan `LULUS`: `images/render-rate-limit.png`.
 
-Tiga screenshot Postman lokal awal dipulihkan tanpa perubahan dari commit Git `3999fbb` dan disalin dari `docs/evidence/local`. Enam screenshot lainnya berasal dari tangkapan manual pengguna pada 21 Oktober 2026. Postman lokal memakai `http://127.0.0.1:8080`, sedangkan Postman Render memakai URL HTTPS Render. Screenshot terminal lokal menjalankan `npm run test:rate-limit`.
+Kesembilan screenshot berasal dari tangkapan manual pengguna pada 21 Oktober 2026. Tiga screenshot Postman lokal diperbarui dengan gambar terbaru yang menampilkan environment **Lab 08 Local** dan popup `baseUrl` berisi `http://127.0.0.1:8080`. Katalog memakai `GET /catalog/products` tanpa filter, pesanan dengan key menghasilkan `200`, dan tanpa key menghasilkan `401`. Bukti pesanan memakai variabel `apiKey`, dengan nilai asli disembunyikan. Gambar lokal disalin tanpa perubahan dari `docs/evidence/local`; sumber berukuran 1918 × 1126 piksel untuk katalog dan tanpa key, serta 1918 × 1123 piksel untuk pesanan dengan key, dengan metadata DPI 144. Crop LaTeX disesuaikan dengan ukuran alami tersebut. Tiga gambar lokal awal tetap tersedia dalam riwayat Git, tetapi digantikan oleh screenshot manual terbaru dalam laporan.
+
+Screenshot Postman Render memakai URL HTTPS Render. Screenshot terminal lokal menjalankan `npm run test:rate-limit`. Enam gambar manual lainnya tetap menggunakan sumber berukuran 1920 × 1200 piksel.
 
 Bukti kesembilan adalah screenshot terminal pengguna saat menjalankan `npm run test:rate-limit:render`. Gambar asli disimpan tanpa perubahan pada `docs/evidence/render/rate-limit.png`. Screenshot cocok dengan log `docs/evidence/render/rate-limit.txt` dan `.json`: mulai `2026-10-21T11:43:50.592Z`, durasi `1681 ms`, 20 respons `200`, lalu 10 respons `429`, dan `LULUS`. Screenshot dan log berasal dari eksekusi yang sama, terpisah dari arsip verifikasi deployment awal.
 

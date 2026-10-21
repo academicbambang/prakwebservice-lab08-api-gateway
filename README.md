@@ -137,7 +137,7 @@ Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika 
 - `docs/postman`: collection dan environment untuk mengulangi pemeriksaan.
 - [Log pengujian otomatis](docs/evidence/tests.txt): 35 dari 35 test lulus.
 - [Transkrip rate limit](docs/evidence/rate-limit.txt) dan [data status JSON](docs/evidence/rate-limit.json): hasil eksekusi aktual 20 status `200` diikuti 10 status `429`.
-- [Asal screenshot](docs/evidence/README.md): tiga screenshot Postman lokal awal yang dipulihkan dari Git dan enam tangkapan layar manual pengguna pada 21 Oktober 2026.
+- [Asal screenshot](docs/evidence/README.md): sembilan tangkapan layar manual pengguna pada 21 Oktober 2026, termasuk tiga screenshot Postman lokal terbaru.
 
 Urutan bukti dalam laporan mengikuti alur lokal, deployment, lalu Render:
 

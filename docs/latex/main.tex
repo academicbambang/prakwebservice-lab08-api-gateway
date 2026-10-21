@@ -39,7 +39,7 @@
   frame=single,rulecolor=\color{line},breaklines=true,columns=fullflexible,
   keepspaces=true,showstringspaces=false,aboveskip=6pt,belowskip=6pt,
   xleftmargin=7pt,xrightmargin=7pt,framexleftmargin=5pt,framexrightmargin=5pt}
-\newcommand{\localshot}[2][160bp 10bp 5bp 67bp]{\includegraphics[width=\linewidth,trim=#1,clip]{#2}}
+\newcommand{\localshot}[2][242bp 80bp 194bp 105bp]{\includegraphics[width=.96\linewidth,trim=#1,clip]{#2}}
 \newcommand{\postmanshot}[2][490bp 260bp 15bp 210bp]{\includegraphics[width=\linewidth,trim=#1,clip]{#2}}
 \begin{document}
 \hypersetup{pageanchor=false}
@@ -232,25 +232,25 @@ tunggu setidaknya 10 detik tanpa request sebelumnya dari IP yang sama.
 
 \clearpage
 \section{Bukti pengujian lokal}
-Urutan bukti dimulai dari lingkungan lokal, dilanjutkan deployment, lalu
-pengujian pada Render. Screenshot berikut memakai satu alamat gateway,
-\code{http://127.0.0.1:8080}. Katalog dan pesanan diteruskan ke service yang
-berbeda. Bukti Postman lokal berasal dari pengujian awal yang tersimpan
-dalam repository.
+Screenshot manual berikut memakai environment \emph{Lab 08 Local} di
+Postman. Variabel \code{baseUrl} mengarah ke satu alamat gateway,
+\code{http://127.0.0.1:8080}, untuk mengakses katalog dan pesanan.
 
 \begin{figure}[H]
 \centering
 \localshot{local-postman-catalog.png}
-\caption{Lokal: \code{GET /catalog/products?search=kopi} menghasilkan
-\code{200 OK}, \code{service: catalog-service}, dan produk sesuai pencarian.}
+\caption{Lokal: \code{GET /catalog/products} menghasilkan
+\code{200 OK} dan data \code{catalog-service}. Popup \code{baseUrl}
+menunjukkan alamat gateway lokal pada port 8080.}
 \label{fig:catalog-local}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\localshot[160bp 110bp 5bp 67bp]{local-postman-orders.png}
+\localshot[242bp 161bp 194bp 105bp]{local-postman-orders.png}
 \caption{Lokal: \code{GET /orders/orders} dengan key benar menghasilkan
-\code{200 OK}, \code{service: order-service}, dan daftar pesanan kosong.}
+\code{200 OK}, \code{service: order-service}, dan daftar pesanan kosong.
+Header memakai variabel \code{apiKey}; key asli tidak ditampilkan.}
 \label{fig:orders-local}
 \end{figure}
 
@@ -258,7 +258,7 @@ dalam repository.
 \section{Verifikasi autentikasi lokal dan pengujian otomatis}
 \begin{figure}[H]
 \centering
-\localshot[160bp 110bp 5bp 67bp]{local-postman-unauthorized.png}
+\localshot[242bp 161bp 194bp 105bp]{local-postman-unauthorized.png}
 \caption{Lokal: request pesanan tanpa header \code{X-API-Key} ditolak
 gateway dengan \code{401 Unauthorized}.}
 \label{fig:unauthorized-local}
