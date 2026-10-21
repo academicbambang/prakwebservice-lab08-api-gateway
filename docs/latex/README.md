@@ -2,7 +2,7 @@
 
 Dokumen utama: [main.tex](main.tex). Folder `images/` memuat seluruh diagram dan tangkapan layar yang dibutuhkan, sehingga proyek ini dapat dipindahkan sebagai satu folder atau diunggah ke Overleaf.
 
-PDF final: [laporan-praktikum-sesi-08.pdf](../../output/pdf/laporan-praktikum-sesi-08.pdf), 9 halaman A4: satu cover dan delapan halaman isi. Cover mengikuti contoh tata letak pengguna dengan identitas individu Bambang Herlambang, NIM 5803024019, dan tahun 2026. Cover tanpa header/footer; penomoran isi dimulai dari 1 dan footer hanya berisi angka. Bagian 8 memuat deployment publik Render dan bukti verifikasinya.
+PDF final: [laporan-praktikum-sesi-08.pdf](../../output/pdf/laporan-praktikum-sesi-08.pdf), 9 halaman A4: satu cover dan delapan halaman isi. Cover mengikuti contoh tata letak pengguna dengan identitas individu Bambang Herlambang, NIM 5803024019, dan tahun 2026. Seluruh halaman tanpa header dan garis header. Cover tanpa footer; penomoran isi dimulai dari 1 dan footer hanya berisi angka. Bagian 8 memuat deployment publik Render dan bukti verifikasinya.
 
 ## Membuka dan mengompilasi
 
