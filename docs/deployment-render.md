@@ -102,7 +102,7 @@ Untuk Postman, import [`render.postman_environment.json`](postman/render.postman
 4. `GET /orders/orders` tanpa key: `401`.
 5. Request yang sama dengan key asli: `200`, data Order Service.
 6. `POST /orders/orders` dengan key: `201`, total dihitung dari katalog; ikuti header `Location` untuk membaca detail.
-7. Setelah window bersih, kirim 30 request cepat ke katalog: 20 respons `200`, kemudian 10 respons `429`.
+7. Jalankan `npm run test:rate-limit:render` untuk 30 request katalog berurutan melalui satu sesi HTTP/2. Skrip menunggu window bersih dan menerima hasil hanya jika 20 respons `200` diikuti 10 respons `429`, penghitung kuota konsisten, serta durasi kurang dari 10 detik. Ambil screenshot URL, 30 status, dan `LULUS` pada terminal.
 
 Bedakan bukti URL publik Render dari pengujian rate limit lokal pada `docs/evidence`. Pastikan API key tidak tampak di screenshot atau berkas yang di-commit.
 

@@ -114,6 +114,14 @@ Skrip menyiapkan stack lokal baru sehingga kuota IP belum terpakai. [Screenshot 
 
 Import collection dan environment dari `docs/postman` ke Postman. Pilih environment lokal, isi `apiKey` dari `gateway/.env` (nilai di file environment sengaja kosong), lalu jalankan katalog dan pesanan dengan basis URL gateway yang sama. Gunakan Postman untuk mengambil screenshot aktual yang menampilkan method, URL, status, dan body; jangan tampilkan nilai header secret.
 
+Untuk mengambil bukti rate limit pada Render, jalankan:
+
+```sh
+npm run test:rate-limit:render
+```
+
+Mode ini mengaktifkan layanan melalui `/readyz`, membaca sisa window dari header `RateLimit-Reset` pada satu probe katalog, lalu menunggu kuota tersebut pulih. Pengujian mengirim 30 request berurutan melalui satu sesi HTTPS dengan HTTP/2. Hasil diterima hanya jika tepat 20 respons `200` diikuti 10 respons `429`, penghitung sisa kuota konsisten, dan seluruh 30 request selesai dalam waktu kurang dari 10 detik. Hindari request lain dari IP yang sama selama pengujian. URL, waktu mulai, durasi, dan setiap status ditampilkan untuk screenshot terminal. Hasil yang lulus disimpan pada `docs/evidence/render/rate-limit.txt` dan `.json`.
+
 Collection dijalankan manual dalam Postman dengan stack `npm start` aktif. Jika server hanya menyimpan `API_KEY_SHA256`, isi variabel Postman `apiKey` menggunakan key asli yang dimiliki klien, bukan digest server. Pengujian alur otomatis melalui gateway dan service nyata berada dalam `npm test`.
 
 ## Berkas pengumpulan

@@ -13,3 +13,9 @@ Lima screenshot berikut diberikan pengguna melalui percakapan pada **21 Oktober 
 Ketiga screenshot Postman memakai satu basis URL `https://prakwebservice-lab08-api-gateway.onrender.com` untuk kedua service (HTTPS, port standar `443`). Daftar pesanan kosong hanya menunjukkan keadaan data saat screenshot diambil.
 
 `rate-limit.txt`, `rate-limit.json`, dan `rate-limit.html` adalah arsip eksekusi rate limit terdahulu, bukan sumber screenshot terminal manual terbaru. `render-verification.txt` dan `.json` menyimpan verifikasi otomatis deployment pertama. `tests.txt` menyimpan hasil awal 35/35, sedangkan `tests-deployment.txt` menyimpan hasil setelah penambahan pemeriksaan deployment 40/40. Seluruh log tersebut dipertahankan sebagai bukti terpisah.
+
+## Pelengkapan bukti lokal dan Render
+
+Tiga screenshot Postman lokal awal dipulihkan dari Git ke folder [`local`](local/README.md), beserta salinan screenshot terminal rate limit lokal. Dengan empat bukti lokal, dashboard deployment, dan tiga screenshot Postman Render, delapan screenshot sudah tersedia untuk urutan laporan: lokal (empat), deployment Render (satu), lalu pengujian Render (empat).
+
+Screenshot terminal rate limit Render masih perlu diambil pengguna. Jalankan `npm run test:rate-limit:render`; pengujian memakai satu sesi HTTP/2, menunggu pemulihan kuota probe, dan memeriksa 30 respons aktual beserta penghitung kuotanya. Log yang lulus disimpan ke `render/rate-limit.txt` dan `render/rate-limit.json`. Log ini merupakan bukti eksekusi, bukan screenshot terminal.
